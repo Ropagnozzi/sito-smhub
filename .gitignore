@@ -1,0 +1,9 @@
+# CNAME: resta fuori finché il sito è in staging, come su sito-diessemedia.
+# Quando si va live con il dominio, si toglie questa riga e si pubblica il file.
+CNAME
+
+Thumbs.db
+desktop.ini
+
+# File temporanei di Office (lock quando un file è aperto)
+~$*

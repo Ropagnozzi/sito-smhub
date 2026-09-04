@@ -1,0 +1,261 @@
+/* SMHUB - direzione: blueprint industriale.
+   Griglia di costruzione a vista, quote da disegno tecnico, tipografia grande,
+   dati in monospaziato, foto a piena larghezza senza effetti. Nessun WebGL. */
+
+/* ---------- palette ----------
+   Due fondi possibili, commutabili con l'attributo data-tema sull'elemento html.
+   "blu" = cianografia (predefinito), "acciaio" = lamiera spazzolata. */
+/* ---------- palette: lamiera di acciaio, tre gradazioni ----------
+   Si commutano con l'attributo data-tema sull'elemento html.
+   Predefinita: "medio". Il fondo blu e stato scartato. */
+:root{
+  /* MEDIO */
+  --fondo:#2f3742;
+  --fondo-2:#363f4b;
+  --piano:#3e4855;
+  --filo:#55616f;
+  --filo-forte:#6b7887;
+  --tenue:#b7c1cc;
+  --testo:#f5f8fb;
+  --testo-muto:#bfc9d4;
+  --linea:#454f5d;
+  --accento:#009ee4;          /* blu del marchio SM Hub */
+  --accento-scuro:#0080ba;
+  --su-accento:#04121f;       /* testo sopra l'accento */
+  --rilievo:linear-gradient(112deg,rgba(230,242,255,.085) 0%,rgba(0,0,0,0) 46%,rgba(0,0,0,.26) 100%);
+  --velo:linear-gradient(180deg,rgba(47,55,66,.76) 0%,rgba(47,55,66,.40) 40%,rgba(47,55,66,.94) 100%);
+  --barra:rgba(47,55,66,.90);
+
+  --font-display:"Archivo",system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,"Cascadia Mono",monospace;
+
+  --bordo:1px solid var(--filo);
+  --barra-h:80px;            /* altezza della barra: la usano hero e squadrature */
+  --gutter:clamp(18px,3.6vw,56px);
+  --max:1560px;
+  color-scheme:dark;
+}
+
+/* SCURO: lamiera brunita */
+html[data-tema="scuro"]{
+  --fondo:#262c34;
+  --fondo-2:#2c333c;
+  --piano:#333b45;
+  --filo:#4a5563;
+  --filo-forte:#5f6c7c;
+  --tenue:#aeb9c5;
+  --testo:#f1f4f8;
+  --testo-muto:#b4bfca;
+  --linea:#3b4552;
+  --rilievo:linear-gradient(112deg,rgba(226,238,250,.075) 0%,rgba(0,0,0,0) 46%,rgba(0,0,0,.22) 100%);
+  --velo:linear-gradient(180deg,rgba(38,44,52,.76) 0%,rgba(38,44,52,.40) 40%,rgba(38,44,52,.94) 100%);
+  --barra:rgba(38,44,52,.90);
+}
+
+/* CHIARO: lamiera lucidata */
+html[data-tema="chiaro"]{
+  --fondo:#3b4552;
+  --fondo-2:#434e5c;
+  --piano:#4c5866;
+  --filo:#63707f;
+  --filo-forte:#7b8898;
+  --tenue:#c3cdd8;
+  --testo:#f8fbfe;
+  --testo-muto:#ccd5df;
+  --linea:#525e6c;
+  --rilievo:linear-gradient(112deg,rgba(235,246,255,.10) 0%,rgba(0,0,0,0) 46%,rgba(0,0,0,.30) 100%);
+  --velo:linear-gradient(180deg,rgba(59,69,82,.78) 0%,rgba(59,69,82,.42) 40%,rgba(59,69,82,.95) 100%);
+  --barra:rgba(59,69,82,.92);
+}
+
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+html,body{overflow-x:clip}
+body{
+  margin:0;background-color:var(--fondo);background-image:var(--rilievo);background-attachment:fixed;color:var(--testo);
+  font-family:var(--font-display);font-size:16px;line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{margin:0;font-weight:600;letter-spacing:-0.03em;line-height:0.98}
+p{margin:0}
+.btn,.slot,input,textarea{border-radius:0}
+
+/* ---------- luce radente ----------
+   Due fasci diagonali sopra tutta la pagina: scorrono con lo scroll tramite
+   scroll-driven animation. Dove non e supportata (Safari, Firefox) scorrono da soli.
+   Vanno in fusione "screen": illuminano, non coprono. */
+.luce{position:fixed;inset:0;z-index:40;pointer-events:none;overflow:hidden;mix-blend-mode:screen}
+.luce i{position:absolute;left:-60%;top:-60%;width:220%;height:220%;display:block;will-change:transform;
+  background:linear-gradient(104deg,transparent 0 36%,rgba(228,242,255,.10) 44%,
+    rgba(232,245,255,.23) 50%,rgba(228,242,255,.10) 56%,transparent 64%)}
+.luce i.tinta{background:linear-gradient(99deg,transparent 0 42%,rgba(0,158,228,.08) 47%,
+  rgba(0,158,228,.26) 50%,rgba(0,158,228,.08) 53%,transparent 58%)}
+/* lama stretta: il colpo di luce speculare, passa piu veloce degli altri due */
+.luce i.lama{background:linear-gradient(107deg,transparent 0 47.4%,rgba(255,255,255,.20) 49.4%,
+  rgba(255,255,255,.34) 50%,rgba(255,255,255,.20) 50.6%,transparent 52.6%)}
+
+@keyframes radente{from{transform:translate3d(-22%,-10%,0)}to{transform:translate3d(24%,12%,0)}}
+@keyframes radenteTinta{from{transform:translate3d(26%,10%,0)}to{transform:translate3d(-24%,-12%,0)}}
+@keyframes radenteLama{from{transform:translate3d(-46%,-16%,0)}to{transform:translate3d(48%,18%,0)}}
+@supports (animation-timeline: scroll()){
+  /* la scorciatoia "animation" imposterebbe durata 0s: con una timeline di scroll
+     serve animation-duration:auto, altrimenti il fascio resta fermo */
+  .luce i{animation-name:radente;animation-timing-function:linear;animation-fill-mode:both;
+    animation-duration:auto;animation-timeline:scroll(root block)}
+  .luce i.tinta{animation-name:radenteTinta}
+  .luce i.lama{animation-name:radenteLama}
+}
+@supports not (animation-timeline: scroll()){
+  .luce i{animation:radente 24s linear infinite alternate}
+  .luce i.tinta{animation:radenteTinta 31s linear infinite alternate}
+  .luce i.lama{animation:radenteLama 17s linear infinite alternate}
+}
+
+/* quota da disegno tecnico: filetto con tacche agli estremi e misura in mezzo */
+.quota{position:relative;display:flex;align-items:center;gap:12px;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--tenue)}
+.quota::before,.quota::after{content:"";height:1px;background:var(--filo-forte);flex:1}
+.quota.sinistra::before{display:none}
+
+/* ---------- navigazione ---------- */
+.nav{position:fixed;top:0;left:0;right:0;z-index:50;height:var(--barra-h);display:flex;align-items:center;
+  gap:clamp(14px,3vw,44px);padding:0 var(--gutter);background:var(--barra);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--filo)}
+/* il marchio e l'unico punto in cui compare l'arancio: i tratti "hub" ereditano
+   il colore del testo tramite currentColor, quindi restano bianchi sul fondo scuro */
+.nav-logo{display:flex;align-items:center;color:var(--testo)}
+.marchio{width:58px;height:58px;display:block}
+.piede-marchio{color:var(--testo)}
+.piede-marchio .marchio{width:34px;height:34px}
+.nav-link{margin-left:auto;display:flex;gap:clamp(14px,2.2vw,30px);align-items:center}
+.nav-link a{font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--testo-muto)}
+.nav-link a:hover{color:var(--accento)}
+.nav .btn{margin-left:clamp(10px,1.8vw,24px)}
+.nav-toggle{display:none;margin-left:auto;background:none;border:1px solid var(--filo-forte);color:var(--testo);
+  font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;padding:8px 13px;text-transform:uppercase;cursor:pointer}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;
+  font-family:var(--font-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  padding:14px 24px;border:1px solid var(--accento);background:var(--accento);color:var(--su-accento);font-weight:600;
+  transition:background .18s,color .18s,border-color .18s}
+.btn:hover{background:var(--accento-scuro);border-color:var(--accento-scuro)}
+.btn:active{transform:translateY(1px)}
+.btn-ghost{background:transparent;color:var(--testo);border-color:var(--filo-forte)}
+.btn-ghost:hover{background:transparent;border-color:var(--accento);color:var(--accento)}
+
+/* interruttore di confronto fra i due fondi: provvisorio, da togliere alla scelta */
+.tema{display:flex;border:1px solid var(--filo-forte);margin-left:clamp(10px,1.6vw,20px)}
+.tema button{background:none;border:0;color:var(--tenue);cursor:pointer;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding:8px 11px}
+.tema button[aria-pressed="true"]{background:var(--filo);color:var(--testo)}
+@media (max-width:768px){.tema{display:none}}
+
+/* ---------- hero: foto piena + squadratura tecnica ---------- */
+.hero{position:relative;min-height:100dvh;display:flex;flex-direction:column;justify-content:flex-end;
+  padding:calc(var(--barra-h) + 34px) var(--gutter) 0;overflow:hidden}
+.hero-media{position:absolute;inset:0;z-index:-2;background:var(--fondo-2)}
+.slide{position:absolute;inset:0;opacity:0;transition:opacity 1.1s linear}
+.slide.on{opacity:1}
+.slide img{width:100%;height:100%;object-fit:cover}
+.hero-velo{position:absolute;inset:0;z-index:-1;
+  background:var(--velo)}
+
+/* segni di squadratura agli angoli, come su una tavola tecnica */
+.squadra{position:absolute;width:26px;height:26px;border:1px solid var(--filo-forte);z-index:2;pointer-events:none}
+.squadra.a{top:calc(var(--barra-h) + 24px);left:var(--gutter);border-right:0;border-bottom:0}
+.squadra.b{top:calc(var(--barra-h) + 24px);right:var(--gutter);border-left:0;border-bottom:0}
+.squadra.c{bottom:26px;left:var(--gutter);border-right:0;border-top:0}
+.squadra.d{bottom:26px;right:var(--gutter);border-left:0;border-top:0}
+
+.hero-testo{position:relative;z-index:3;width:100%;max-width:var(--max);margin:0 auto;padding-bottom:clamp(44px,7vh,92px)}
+.hero h1{font-size:clamp(44px,8.4vw,138px);letter-spacing:-0.045em;max-width:13ch;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--accento)}
+.hero-sotto{display:flex;flex-wrap:wrap;gap:clamp(20px,4vw,64px);align-items:flex-end;margin-top:clamp(24px,4vh,46px)}
+.hero p{max-width:44ch;font-size:clamp(15px,1.25vw,18px);color:var(--testo-muto)}
+.hero-azioni{display:flex;gap:12px;flex-wrap:wrap}
+.hero .quota{position:relative;z-index:3;max-width:var(--max);margin:0 auto;width:100%;padding-bottom:22px}
+
+/* slot fotografico dichiarato: da sostituire con le foto reali */
+.slot{position:absolute;inset:0;display:grid;place-items:center;background:var(--fondo-2);
+  border:1px solid var(--linea)}
+.slot span{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.18em;color:var(--tenue);
+  text-transform:uppercase;text-align:center;padding:0 20px;line-height:2;border:1px dashed var(--filo-forte)}
+.slot span{padding:14px 22px}
+
+/* ---------- struttura delle sezioni ---------- */
+section{position:relative;z-index:2}
+.wrap{max-width:var(--max);margin:0 auto;padding:clamp(64px,9vh,124px) var(--gutter)}
+.etichetta{font-family:var(--font-mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accento)}
+h2{font-size:clamp(30px,5.4vw,86px);letter-spacing:-0.04em;max-width:16ch;text-wrap:balance}
+.intro{margin-top:22px;max-width:56ch;color:var(--testo-muto);font-size:17px}
+
+/* servizi: righe piene, numerazione grande in filo di contorno */
+.righe{margin-top:clamp(36px,6vh,70px);border-top:1px solid var(--filo)}
+.riga{display:grid;grid-template-columns:minmax(90px,1fr) 5fr 4fr;gap:clamp(16px,3vw,48px);
+  align-items:start;padding:clamp(26px,4vh,48px) 0;border-bottom:1px solid var(--filo)}
+.riga .num{font-family:var(--font-mono);font-size:clamp(30px,4vw,58px);line-height:1;color:transparent;
+  -webkit-text-stroke:1px var(--filo-forte);letter-spacing:-0.04em}
+.riga h3{font-size:clamp(22px,2.6vw,40px);letter-spacing:-0.03em}
+.riga p{color:var(--testo-muto);font-size:16px;max-width:46ch}
+@media (max-width:900px){.riga{grid-template-columns:1fr;gap:12px}}
+
+/* copertura: mappa a piena larghezza con cornice tecnica */
+.copertura{border-top:1px solid var(--filo);background:var(--fondo-2)}
+.copertura .wrap{padding-bottom:0}
+.copertura-testa{display:grid;grid-template-columns:1.4fr 1fr;gap:clamp(20px,4vw,64px);align-items:end}
+@media (max-width:900px){.copertura-testa{grid-template-columns:1fr}}
+.mappa-guscio{position:relative;margin-top:clamp(32px,5vh,64px);border-top:1px solid var(--filo)}
+#mappa{height:clamp(360px,66vh,720px);background:var(--fondo-2)}
+.leaflet-container{background:var(--fondo-2)}
+/* resa notturna delle tile OSM: inversione + desaturazione, i marker restano fuori dal filtro */
+#mappa .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) grayscale(.55) brightness(.78) contrast(1.04)}
+.leaflet-control-attribution{background:var(--barra)!important;color:var(--tenue)!important;font-family:var(--font-mono);font-size:10px}
+.leaflet-control-attribution a{color:var(--testo-muto)!important}
+.mappa-nota{position:absolute;left:0;bottom:0;z-index:400;background:var(--fondo);border-top:1px solid var(--filo);
+  border-right:1px solid var(--filo);padding:12px 18px;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--tenue)}
+
+/* scheda impianto: tabella tecnica raggruppata, niente filetto su ogni riga */
+.scheda{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--filo);margin-top:clamp(36px,6vh,70px)}
+@media (max-width:900px){.scheda{grid-template-columns:1fr}}
+.scheda-foto{position:relative;min-height:clamp(280px,44vh,520px);border-right:1px solid var(--filo)}
+@media (max-width:900px){.scheda-foto{border-right:0;border-bottom:1px solid var(--filo)}}
+.scheda-corpo{padding:clamp(22px,2.6vw,42px)}
+.scheda-corpo h3{font-size:clamp(20px,2.2vw,30px)}
+.scheda-corpo>p{margin-top:10px;color:var(--testo-muto);max-width:42ch}
+.blocco{margin-top:30px}
+.blocco>span{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accento)}
+.blocco dl{margin:12px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px 26px}
+.blocco dt{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--tenue)}
+.blocco dd{margin:2px 0 0;font-size:16px;color:var(--testo-muto)}
+
+/* chiusura */
+.chiusura{border-top:1px solid var(--filo)}
+.chiusura h2{max-width:14ch}
+.chiusura .btn{margin-top:clamp(26px,4vh,44px)}
+
+footer{border-top:1px solid var(--filo);background:var(--fondo)}
+.piede{max-width:var(--max);margin:0 auto;padding:36px var(--gutter);display:flex;flex-wrap:wrap;gap:20px;
+  justify-content:space-between;align-items:flex-end;
+  font-family:var(--font-mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--tenue)}
+.piede a:hover{color:var(--accento)}
+
+/* ---------- responsive ---------- */
+@media (max-width:768px){
+  :root{--barra-h:66px}
+  .marchio{width:46px;height:46px}
+  .nav-link{position:fixed;top:var(--barra-h);left:0;right:0;flex-direction:column;align-items:flex-start;gap:0;
+    background:var(--fondo-2);border-bottom:1px solid var(--filo);padding:6px var(--gutter) 18px;display:none}
+  .nav-link.aperto{display:flex}
+  .nav-link a{padding:14px 0;font-size:13px;width:100%;border-bottom:1px solid var(--filo)}
+  .nav-toggle{display:inline-block}
+  .nav .btn{display:none}
+  .squadra{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .slide{transition:none}
+  .luce i{animation:none!important;transform:none}
+}
