@@ -26,8 +26,16 @@
   --velo:linear-gradient(180deg,rgba(47,55,66,.76) 0%,rgba(47,55,66,.40) 40%,rgba(47,55,66,.94) 100%);
   --barra:rgba(47,55,66,.90);
 
-  --font-display:"Archivo",system-ui,sans-serif;
+  --font-display:"Archivo",system-ui,sans-serif;   /* titoli */
+  --font-testo:"Archivo",system-ui,sans-serif;     /* testo corrente */
   --font-mono:"IBM Plex Mono",ui-monospace,"Cascadia Mono",monospace;
+
+  /* Comando unico dei titoli: peso, crenatura, interlinea e scala.
+     Li ridefiniscono i blocchi html[data-carattere=...] piu sotto. */
+  --titolo-peso:600;
+  --titolo-tracking:-0.03em;
+  --titolo-interlinea:0.98;
+  --titolo-scala:1;
 
   --bordo:1px solid var(--filo);
   --barra-h:80px;            /* altezza della barra: la usano hero e squadrature */
@@ -69,17 +77,55 @@ html[data-tema="chiaro"]{
 }
 
 
+/* ---------- carattere dei titoli: confronto provvisorio ----------
+   Si commuta con l'attributo data-carattere sull'elemento html. Predefinito:
+   nessun attributo = Archivo, quello di partenza. Ogni variante porta con se
+   peso, crenatura, interlinea e scala: un carattere signorile non si ottiene
+   solo cambiando famiglia, ma anche alleggerendo peso e corpo.
+   Quando la scelta e fatta: togliere il gruppo .carattere dal markup, il blocco
+   dal JS, e portare i valori della variante scelta dentro :root. */
+
+/* SERIF: Newsreader, grazie editoriali, la piu calda */
+html[data-carattere="serif"]{
+  --font-display:"Newsreader",Georgia,"Times New Roman",serif;
+  --titolo-peso:400;
+  --titolo-tracking:-0.005em;
+  --titolo-interlinea:1.05;
+  --titolo-scala:.96;
+}
+
+/* ALTA: Instrument Serif, grazie sottili e lettere strette, la piu scultorea */
+html[data-carattere="alta"]{
+  --font-display:"Instrument Serif",Georgia,serif;
+  --titolo-peso:400;
+  --titolo-tracking:0;
+  --titolo-interlinea:1.02;
+  --titolo-scala:1;
+}
+
+/* SANS: Inter Tight, resta senza grazie ma molto meno gridata di Archivo */
+html[data-carattere="sans"]{
+  --font-display:"Inter Tight",system-ui,sans-serif;
+  --font-testo:"Inter Tight",system-ui,sans-serif;
+  --titolo-peso:500;
+  --titolo-tracking:-0.022em;
+  --titolo-interlinea:1.04;
+  --titolo-scala:.92;
+}
+
+
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 html,body{overflow-x:clip}
 body{
   margin:0;background-color:var(--fondo);background-image:var(--rilievo);background-attachment:fixed;color:var(--testo);
-  font-family:var(--font-display);font-size:16px;line-height:1.5;
+  font-family:var(--font-testo);font-size:16px;line-height:1.5;
   -webkit-font-smoothing:antialiased;
 }
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
-h1,h2,h3{margin:0;font-weight:600;letter-spacing:-0.03em;line-height:0.98}
+h1,h2,h3{margin:0;font-family:var(--font-display);font-weight:var(--titolo-peso);
+  letter-spacing:var(--titolo-tracking);line-height:var(--titolo-interlinea)}
 p{margin:0}
 .btn,.slot,input,textarea{border-radius:0}
 
@@ -147,11 +193,11 @@ p{margin:0}
 .btn-ghost:hover{background:transparent;border-color:var(--accento);color:var(--accento)}
 
 /* interruttore di confronto fra i due fondi: provvisorio, da togliere alla scelta */
-.tema{display:flex;border:1px solid var(--filo-forte);margin-left:clamp(10px,1.6vw,20px)}
-.tema button{background:none;border:0;color:var(--tenue);cursor:pointer;
+.tema,.carattere{display:flex;border:1px solid var(--filo-forte);margin-left:clamp(10px,1.6vw,20px)}
+.tema button,.carattere button{background:none;border:0;color:var(--tenue);cursor:pointer;
   font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding:8px 11px}
-.tema button[aria-pressed="true"]{background:var(--filo);color:var(--testo)}
-@media (max-width:768px){.tema{display:none}}
+.tema button[aria-pressed="true"],.carattere button[aria-pressed="true"]{background:var(--filo);color:var(--testo)}
+@media (max-width:768px){.tema,.carattere{display:none}}
 
 /* ---------- hero: foto piena + squadratura tecnica ---------- */
 .hero{position:relative;min-height:100dvh;display:flex;flex-direction:column;justify-content:flex-end;
@@ -171,7 +217,8 @@ p{margin:0}
 .squadra.d{bottom:26px;right:var(--gutter);border-left:0;border-top:0}
 
 .hero-testo{position:relative;z-index:3;width:100%;max-width:var(--max);margin:0 auto;padding-bottom:clamp(44px,7vh,92px)}
-.hero h1{font-size:clamp(44px,8.4vw,138px);letter-spacing:-0.045em;max-width:13ch;text-wrap:balance}
+.hero h1{font-size:calc(clamp(44px,8.4vw,138px)*var(--titolo-scala));
+  letter-spacing:calc(var(--titolo-tracking) - 0.015em);max-width:13ch;text-wrap:balance}
 .hero h1 em{font-style:normal;color:var(--accento)}
 .hero-sotto{display:flex;flex-wrap:wrap;gap:clamp(20px,4vw,64px);align-items:flex-end;margin-top:clamp(24px,4vh,46px)}
 .hero p{max-width:44ch;font-size:clamp(15px,1.25vw,18px);color:var(--testo-muto)}
@@ -189,7 +236,8 @@ p{margin:0}
 section{position:relative;z-index:2}
 .wrap{max-width:var(--max);margin:0 auto;padding:clamp(64px,9vh,124px) var(--gutter)}
 .etichetta{font-family:var(--font-mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--accento)}
-h2{font-size:clamp(30px,5.4vw,86px);letter-spacing:-0.04em;max-width:16ch;text-wrap:balance}
+h2{font-size:calc(clamp(30px,5.4vw,86px)*var(--titolo-scala));
+  letter-spacing:calc(var(--titolo-tracking) - 0.01em);max-width:16ch;text-wrap:balance}
 .intro{margin-top:22px;max-width:56ch;color:var(--testo-muto);font-size:17px}
 
 /* servizi: righe piene, numerazione grande in filo di contorno */
@@ -198,7 +246,7 @@ h2{font-size:clamp(30px,5.4vw,86px);letter-spacing:-0.04em;max-width:16ch;text-w
   align-items:start;padding:clamp(26px,4vh,48px) 0;border-bottom:1px solid var(--filo)}
 .riga .num{font-family:var(--font-mono);font-size:clamp(30px,4vw,58px);line-height:1;color:transparent;
   -webkit-text-stroke:1px var(--filo-forte);letter-spacing:-0.04em}
-.riga h3{font-size:clamp(22px,2.6vw,40px);letter-spacing:-0.03em}
+.riga h3{font-size:calc(clamp(22px,2.6vw,40px)*var(--titolo-scala))}
 .riga p{color:var(--testo-muto);font-size:16px;max-width:46ch}
 @media (max-width:900px){.riga{grid-template-columns:1fr;gap:12px}}
 
@@ -224,7 +272,7 @@ h2{font-size:clamp(30px,5.4vw,86px);letter-spacing:-0.04em;max-width:16ch;text-w
 .scheda-foto{position:relative;min-height:clamp(280px,44vh,520px);border-right:1px solid var(--filo)}
 @media (max-width:900px){.scheda-foto{border-right:0;border-bottom:1px solid var(--filo)}}
 .scheda-corpo{padding:clamp(22px,2.6vw,42px)}
-.scheda-corpo h3{font-size:clamp(20px,2.2vw,30px)}
+.scheda-corpo h3{font-size:calc(clamp(20px,2.2vw,30px)*var(--titolo-scala))}
 .scheda-corpo>p{margin-top:10px;color:var(--testo-muto);max-width:42ch}
 .blocco{margin-top:30px}
 .blocco>span{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accento)}

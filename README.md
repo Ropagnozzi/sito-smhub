@@ -35,12 +35,31 @@ observer, quindi niente rischio di sezioni invisibili su schede in secondo piano
 - Nessun raggio di curvatura: tutto spigolo vivo.
 - Tipografia: Archivo (titoli) e IBM Plex Mono (dati e etichette).
 
-### Interruttore provvisorio
+### Interruttori provvisori
 
 Nella barra in alto c'e un gruppo `.tema` con i tre pulsanti Scuro, Medio e Chiaro: serve solo a scegliere,
 la preferenza resta in `localStorage` come `smhubTema`. **Quando il fondo e deciso**: togliere il
 `<div class="tema">` da `index.html`, togliere il blocco dell'interruttore da `js/site.js` e lasciare
 nel CSS la sola palette scelta, spostandone i valori dentro `:root`.
+
+Accanto c'e un secondo gruppo, `.carattere`, con quattro pulsanti per il **carattere dei titoli**:
+
+| Pulsante | Carattere | Come si comporta |
+|---|---|---|
+| Ora | Archivo 600 | quello di partenza: grotesca stretta, peso alto, titoli fino a 138px |
+| Serif | Newsreader 400 | grazie editoriali, la piu calda e discorsiva |
+| Alta | Instrument Serif 400 | grazie sottili, lettere strette e alte, la piu scultorea |
+| Sans | Inter Tight 500 | resta senza grazie ma molto meno gridata (cambia anche il testo corrente) |
+
+Ogni variante non cambia solo la famiglia: porta con se **peso, crenatura, interlinea e scala** del
+titolo, perche un lettering signorile si ottiene anche alleggerendo peso e corpo. Le leve sono quattro
+variabili in `:root` (`--titolo-peso`, `--titolo-tracking`, `--titolo-interlinea`, `--titolo-scala`)
+usate da `h1, h2, h3`; la scala moltiplica i `clamp()` esistenti, quindi i rapporti fra i corpi restano.
+La preferenza resta in `localStorage` come `smhubCarattere`.
+
+**Quando il carattere e deciso**: togliere il `<div class="carattere">` da `index.html`, togliere il
+blocco dell'interruttore da `js/site.js`, portare i valori della variante scelta dentro `:root` ed
+eliminare dal `<link>` dei Google Fonts le famiglie non usate (restano due: titoli e monospaziato).
 
 ## File
 
@@ -86,6 +105,7 @@ di CARTO ora richiedono una API key, per questo non sono usate.
 
 ## Da completare
 
+- Scelta del carattere dei titoli fra le quattro varianti in barra (poi togliere l'interruttore).
 - Foto degli impianti (hero, scheda, sezione servizi).
 - Elenco impianti con codice, indirizzo, formato, tipologia e coordinate.
 - Recapiti reali: email, telefono, indirizzo, partita IVA (nel piede e nel pulsante contatti).
