@@ -9,6 +9,19 @@
   /* ---------- sequenza fotografica dell'hero -------------------------------
      Non e un file video: sono le foto degli impianti in dissolvenza.
      Aggiungere un impianto significa aggiungere una foto. */
+  /* I riquadri dell'hero si riempiono con le foto degli impianti piu grandi:
+     cosi restano allineati all'inventario e non puntano a un file che un domani
+     lo script potrebbe cancellare. Senza dati restano i segnaposto. */
+  var vetrina = elenco()
+    .filter(function (i) { return i.photos && i.photos.length; })
+    .sort(function (a, b) { return (b.sqm || 0) - (a.sqm || 0); });
+  [].slice.call(document.querySelectorAll('#sequenza .slide')).forEach(function (slide, i) {
+    var imp = vetrina[i];
+    if (!imp) return;
+    slide.innerHTML = '<img src="assets/foto/impianti/' + imp.photos[0] + '"' +
+      (i === 0 ? '' : ' loading="lazy"') + ' decoding="async" alt="">';
+  });
+
   var slides = [].slice.call(document.querySelectorAll('#sequenza .slide'));
   if (slides.length > 1 && !pocoMoto) {
     var indice = 0;
@@ -109,19 +122,87 @@
       attribution: '&copy; OpenStreetMap'
     }).addTo(mappa);
 
-    // IMPIANTI: elenco da popolare con i dati reali (codice, lat, lon)
-    var IMPIANTI = [];
+    // Gli impianti arrivano da js/impianti-data.js, generato da build-impianti.py
+    // a partire dall'xlsx: qui non si scrive nessun dato a mano.
+    var conCoordinate = elenco().filter(function (i) { return i.lat && i.lng; });
     var nota = document.querySelector('.mappa-nota');
-    if (IMPIANTI.length) {
+    if (conCoordinate.length) {
       var gruppo = L.featureGroup();
-      IMPIANTI.forEach(function (imp) {
-        L.circleMarker([imp.lat, imp.lon], {
+      conCoordinate.forEach(function (imp) {
+        L.circleMarker([imp.lat, imp.lng], {
           radius: 6, color: '#009ee4', weight: 2, fillColor: '#009ee4', fillOpacity: 0.6
-        }).bindPopup(imp.codice).addTo(gruppo);
+        }).bindPopup(
+          '<strong>' + testo(imp.code) + '</strong><br>' + testo(imp.pos) +
+          '<br>' + testo(imp.dim) + (imp.sqm ? ' &middot; ' + imp.sqm + ' m&sup2;' : '')
+        ).addTo(gruppo);
       });
       gruppo.addTo(mappa);
       mappa.fitBounds(gruppo.getBounds().pad(0.15));
-      if (nota) nota.textContent = IMPIANTI.length + ' impianti sulla mappa';
+      if (nota) nota.textContent = conCoordinate.length + ' impianti sulla mappa';
+    } else if (nota) {
+      nota.textContent = 'Posizioni degli impianti in caricamento';
     }
+  }
+
+  /* ---------- elenco degli impianti ----------------------------------------
+     Le schede nascono dai dati, non dal markup: aggiungere un impianto vuol
+     dire aggiungere una riga nell'xlsx e ri-lanciare build-impianti.py. */
+  var contenitoreElenco = document.getElementById('elenco-impianti');
+  if (contenitoreElenco) {
+    var impianti = elenco();
+    var pezzi = impianti.map(function (imp) {
+      var foto = imp.photos && imp.photos.length
+        ? '<img loading="lazy" decoding="async" src="assets/foto/impianti/' + imp.photos[0] +
+          '" alt="Impianto ' + testo(imp.code) + ' in ' + testo(imp.pos) + ', Napoli">'
+        : '<div class="slot"><span>Foto in arrivo</span></div>';
+      var dati = [
+        ['Formato', imp.dim],
+        ['Superficie', imp.sqm ? imp.sqm + ' m&sup2;' : null],
+        ['Illuminazione', imp.light ? 'sì' : 'no'],
+        ['Tipologia', imp.type]
+      ].filter(function (r) { return r[1]; }).map(function (r) {
+        return '<div><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd></div>';
+      }).join('');
+      return '<article class="imp" id="imp-' + testo(imp.code) + '">' +
+               '<div class="imp-foto">' + foto + '</div>' +
+               '<div class="imp-corpo">' +
+                 '<p class="imp-code">' + testo(imp.code) + '</p>' +
+                 '<h3>' + testo(imp.pos) + '</h3>' +
+                 '<dl class="imp-dati">' + dati + '</dl>' +
+               '</div>' +
+             '</article>';
+    });
+    contenitoreElenco.innerHTML = pezzi.join('');
+
+    var riepilogo = document.getElementById('conta-impianti');
+    if (riepilogo) {
+      var mq = impianti.reduce(function (t, i) { return t + (i.sqm || 0); }, 0);
+      var illuminati = impianti.filter(function (i) { return i.light; }).length;
+      riepilogo.innerHTML =
+        voce(impianti.length, 'impianti') +
+        voce(migliaia(mq), 'metri quadri di superficie') +
+        voce(illuminati, 'illuminati');
+    }
+  }
+
+  function migliaia(n) {
+    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  function voce(numero, etichetta) {
+    return '<li><span class="conta-n">' + numero + '</span>' +
+           '<span class="conta-e">' + etichetta + '</span></li>';
+  }
+
+  /* L'elenco puo non esserci (file dati non ancora generato): non e un errore,
+     la pagina resta in piedi con la mappa vuota e nessuna scheda. */
+  function elenco() {
+    return Array.isArray(window.SMHUB_IMPIANTI) ? window.SMHUB_IMPIANTI : [];
+  }
+
+  function testo(v) {
+    return String(v == null ? '' : v)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
   }
 })();

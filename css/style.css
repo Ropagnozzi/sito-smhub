@@ -266,19 +266,31 @@ h2{font-size:calc(clamp(30px,5.4vw,86px)*var(--titolo-scala));
   border-right:1px solid var(--filo);padding:12px 18px;
   font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--tenue)}
 
-/* scheda impianto: tabella tecnica raggruppata, niente filetto su ogni riga */
-.scheda{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--filo);margin-top:clamp(36px,6vh,70px)}
-@media (max-width:900px){.scheda{grid-template-columns:1fr}}
-.scheda-foto{position:relative;min-height:clamp(280px,44vh,520px);border-right:1px solid var(--filo)}
-@media (max-width:900px){.scheda-foto{border-right:0;border-bottom:1px solid var(--filo)}}
-.scheda-corpo{padding:clamp(22px,2.6vw,42px)}
-.scheda-corpo h3{font-size:calc(clamp(20px,2.2vw,30px)*var(--titolo-scala))}
-.scheda-corpo>p{margin-top:10px;color:var(--testo-muto);max-width:42ch}
-.blocco{margin-top:30px}
-.blocco>span{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--accento)}
-.blocco dl{margin:12px 0 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px 26px}
-.blocco dt{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--tenue)}
-.blocco dd{margin:2px 0 0;font-size:16px;color:var(--testo-muto)}
+/* ---------- riepilogo e elenco degli impianti ----------
+   Le schede sono generate da js/site.js a partire da js/impianti-data.js.
+   Squadratura netta, foto senza effetti, dati in monospaziato: la scheda deve
+   somigliare a una tavola tecnica, non a una card di catalogo. */
+.conta{list-style:none;margin:clamp(28px,4vh,44px) 0 0;padding:0;display:flex;flex-wrap:wrap;
+  border-top:1px solid var(--filo);border-bottom:1px solid var(--filo)}
+.conta li{display:flex;flex-direction:column;gap:6px;padding:clamp(16px,2.4vh,24px) clamp(18px,3vw,44px) clamp(16px,2.4vh,24px) 0;
+  border-right:1px solid var(--filo);margin-right:clamp(18px,3vw,44px)}
+.conta li:last-child{border-right:0;margin-right:0}
+.conta-n{font-size:clamp(28px,3.4vw,46px);line-height:1;letter-spacing:-0.02em}
+.conta-e{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--tenue)}
+
+.elenco{margin-top:clamp(32px,5vh,58px);display:grid;gap:1px;background:var(--filo);
+  border:1px solid var(--filo);grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}
+.imp{background:var(--fondo);display:flex;flex-direction:column}
+.imp-foto{position:relative;aspect-ratio:16/9;background:var(--fondo-2);overflow:hidden}
+.imp-foto img{width:100%;height:100%;object-fit:cover}
+.imp-foto .slot{position:absolute;inset:0}
+.imp-corpo{padding:clamp(16px,1.6vw,24px);display:flex;flex-direction:column;flex:1}
+.imp-code{font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accento)}
+.imp h3{margin-top:10px;font-size:clamp(17px,1.35vw,21px);line-height:1.2;letter-spacing:0}
+.imp-dati{margin:auto 0 0;padding-top:18px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px 18px}
+.imp-dati>div{min-width:0}
+.imp-dati dt{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--tenue)}
+.imp-dati dd{margin:3px 0 0;font-size:15px;color:var(--testo-muto)}
 
 /* chiusura */
 .chiusura{border-top:1px solid var(--filo)}

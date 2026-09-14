@@ -11,7 +11,7 @@
      Inter Tight servono solo al confronto in barra: quando la scelta e fatta, restano le due usate. -->
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif&family=Inter+Tight:wght@400;500;600&family=Newsreader:opsz,wght@6..72,300..600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="css/style.css?v=17">
+<link rel="stylesheet" href="css/style.css?v=18">
 </head>
 <body>
 
@@ -125,40 +125,10 @@
   <section id="impianti">
     <div class="wrap">
       <p class="etichetta">Impianti</p>
-      <h2>La scheda di ogni impianto.</h2>
-      <p class="intro">Foto reale, dati tecnici e posizione esatta sulla mappa. Questo è il modello che verrà ripetuto per tutti gli impianti a catalogo.</p>
-      <article class="scheda">
-        <div class="scheda-foto">
-          <div class="slot"><span>Foto dell'impianto<br>minimo 1600 x 1200</span></div>
-        </div>
-        <div class="scheda-corpo">
-          <h3>Codice impianto</h3>
-          <p>Indirizzo e riferimento della posizione, con il senso di marcia da cui l'impianto è visibile.</p>
-          <div class="blocco">
-            <span>Impianto</span>
-            <dl>
-              <div><dt>Formato</dt><dd>base x altezza</dd></div>
-              <div><dt>Tipologia</dt><dd>palazzo o stand alone</dd></div>
-              <div><dt>Illuminazione</dt><dd>sì o no</dd></div>
-            </dl>
-          </div>
-          <div class="blocco">
-            <span>Posizione</span>
-            <dl>
-              <div><dt>Zona</dt><dd>quartiere</dd></div>
-              <div><dt>Coordinate</dt><dd>lat, lon</dd></div>
-              <div><dt>Visibilità</dt><dd>senso di marcia</dd></div>
-            </dl>
-          </div>
-          <div class="blocco">
-            <span>Commerciale</span>
-            <dl>
-              <div><dt>Disponibilità</dt><dd>periodo</dd></div>
-              <div><dt>Uscita minima</dt><dd>durata</dd></div>
-            </dl>
-          </div>
-        </div>
-      </article>
+      <h2>Ogni posizione, vista da vicino.</h2>
+      <p class="intro">Foto scattata dalla strada, formato reale e punto esatto sulla mappa. Nessun rendering, nessuna simulazione: quello che vedi qui è quello che vede chi passa.</p>
+      <ul class="conta" id="conta-impianti" aria-label="Riepilogo del patrimonio impianti"></ul>
+      <div class="elenco" id="elenco-impianti"></div>
     </div>
   </section>
 
@@ -196,6 +166,7 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
-<script src="js/site.js?v=7" defer></script>
+<script src="js/impianti-data.js?v=1" defer></script>
+<script src="js/site.js?v=9" defer></script>
 </body>
 </html>

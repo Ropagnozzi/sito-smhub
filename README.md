@@ -67,8 +67,11 @@ eliminare dal `<link>` dei Google Fonts le famiglie non usate (restano due: tito
 index.html        pagina unica (hero, servizi, copertura, scheda impianto, contatti)
 css/style.css     sistema visivo completo
 assets/logo-smhub.svg  marchio vettoriale (inserito in linea nel markup)
-js/site.js        sequenza fotografica, menu mobile, mappa Leaflet
-assets/foto/      foto degli impianti (da caricare)
+js/site.js        hero, menu mobile, mappa Leaflet, elenco delle schede
+js/impianti-data.js    GENERATO: gli impianti (non modificare a mano)
+build-impianti.py      genera i dati dall'xlsx di Diesse Media
+AGGIORNA_IMPIANTI.bat  doppio-click per rigenerare tutto
+assets/foto/impianti/  GENERATE: foto copiate dal sito Diesse Media
 ```
 
 ## Come inserire le foto
@@ -89,25 +92,58 @@ con
 Le foto vanno in orizzontale, minimo 1920 x 1080. Aggiungere un impianto significa aggiungere un
 blocco: la sequenza gira da sola su quante slide trova.
 
-## Come accendere i segnaposti sulla mappa
+## Gli impianti: da dove arrivano i dati
 
-In `js/site.js` la costante `IMPIANTI` e vuota. Popolandola i marker compaiono da soli, la mappa si
-inquadra sui punti e la nota in basso a sinistra passa da "in caricamento" al numero di impianti.
+SM HUB e Diesse Media sono **due soggetti autonomi**, ma i maxi impianti sono gli stessi. Per non
+mantenere due elenchi che divergono, l'inventario vive in **un solo file**: `maxi-impianti.xlsx` nella
+cartella del sito Diesse Media, qui accanto. Da quello si generano i dati di tutti e due i siti.
 
-```js
-var IMPIANTI = [
-  { codice: 'NA-014 Via Marina', lat: 40.8412, lon: 14.2712 }
-];
+```
+../sito-diessemedia/maxi-impianti.xlsx
+        |
+        |--> build-maxi-data.py   -> sito Diesse Media
+        +--> build-impianti.py    -> SM HUB (js/impianti-data.js + assets/foto/impianti/)
 ```
 
-Le tile sono OpenStreetMap senza chiave, rese scure invertendo il pannello via CSS. Le tile scure
-di CARTO ora richiedono una API key, per questo non sono usate.
+**Per aggiornare gli impianti**: si corregge l'xlsx (nella cartella di Diesse Media), poi doppio-click
+su `AGGIORNA_IMPIANTI.bat`. Lo script rigenera `js/impianti-data.js`, copia le foto che servono e
+cancella quelle rimaste orfane. Da qui si alimentano da soli: i riquadri dell'hero, il riepilogo
+(impianti, metri quadri, illuminati), l'elenco delle schede e i segnaposti sulla mappa.
+**Non si scrive nessun dato a mano nel sito.**
+
+### Chi va su quale sito
+
+Oggi entrano tutti gli impianti. Quando qualcuno dovra restare **solo** su SM HUB (o solo su Diesse
+Media), si aggiunge all'xlsx una colonna `sito`:
+
+| Valore | Significato |
+|---|---|
+| *(vuoto)* | sta su tutti e due i siti — comportamento di oggi |
+| `sm` | solo SM HUB |
+| `dm` | solo Diesse Media (non compare qui) |
+| `dm+sm` | tutti e due, scritto in chiaro |
+
+Finche la colonna non esiste, non cambia niente. Lo script di Diesse Media ignora le colonne che non
+conosce, quindi aggiungerla non rompe l'altro sito.
+
+### Cosa NON viene portato su SM HUB
+
+Le colonne `pdf` (presentazioni su Drive) e `link_web` (schede su diessemedia.it) sono a marchio
+Diesse Media e restano fuori. Se serviranno presentazioni anche qui, vanno rifatte a marchio SM HUB.
+
+### Come vengono riscritte le posizioni
+
+Nell'xlsx le posizioni sono in maiuscolo e abbreviate (`VIA MARINA ANG.GIANTURCO DIR.CENTRO`). Lo
+script le rende leggibili (`Via Marina angolo Gianturco direzione Centro`): e il primo pezzo del taglio
+autonomo di SM HUB, visto che il dato e lo stesso ma il modo di presentarlo no. Le tabelle `SIGLE`,
+`MINUSCOLE` e `ABBREVIAZIONI` in cima a `build-impianti.py` si correggono a mano se una parola esce male.
 
 ## Da completare
 
 - Scelta del carattere dei titoli fra le quattro varianti in barra (poi togliere l'interruttore).
-- Foto degli impianti (hero, scheda, sezione servizi).
-- Elenco impianti con codice, indirizzo, formato, tipologia e coordinate.
+- Testi commerciali di SM HUB: oggi le schede portano i dati tecnici, manca il racconto (perche quella
+  posizione vale, cosa ci si vede intorno).
+- Verifica delle posizioni riscritte automaticamente: qualche abbreviazione puo essere uscita male.
 - Recapiti reali: email, telefono, indirizzo, partita IVA (nel piede e nel pulsante contatti).
 - Pagine interne (impianti, contatti) e pagine legali (privacy, cookie) quando si decide la struttura.
 - Dominio e pubblicazione.
