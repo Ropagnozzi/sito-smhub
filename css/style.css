@@ -23,7 +23,7 @@
   --accento-scuro:#0080ba;
   --su-accento:#04121f;       /* testo sopra l'accento */
   --rilievo:linear-gradient(112deg,rgba(230,242,255,.085) 0%,rgba(0,0,0,0) 46%,rgba(0,0,0,.26) 100%);
-  --velo:linear-gradient(180deg,rgba(47,55,66,.76) 0%,rgba(47,55,66,.40) 40%,rgba(47,55,66,.94) 100%);
+  --velo:linear-gradient(180deg,rgba(28,34,43,.34) 0%,rgba(28,34,43,.18) 42%,rgba(28,34,43,.62) 100%);
   --barra:rgba(47,55,66,.90);
 
   --font-display:"Archivo",system-ui,sans-serif;   /* titoli */
@@ -56,7 +56,7 @@ html[data-tema="scuro"]{
   --testo-muto:#b4bfca;
   --linea:#3b4552;
   --rilievo:linear-gradient(112deg,rgba(226,238,250,.075) 0%,rgba(0,0,0,0) 46%,rgba(0,0,0,.22) 100%);
-  --velo:linear-gradient(180deg,rgba(38,44,52,.76) 0%,rgba(38,44,52,.40) 40%,rgba(38,44,52,.94) 100%);
+  --velo:linear-gradient(180deg,rgba(22,27,34,.36) 0%,rgba(22,27,34,.20) 42%,rgba(22,27,34,.64) 100%);
   --barra:rgba(38,44,52,.90);
 }
 
@@ -72,7 +72,7 @@ html[data-tema="chiaro"]{
   --testo-muto:#ccd5df;
   --linea:#525e6c;
   --rilievo:linear-gradient(112deg,rgba(235,246,255,.10) 0%,rgba(0,0,0,0) 46%,rgba(0,0,0,.30) 100%);
-  --velo:linear-gradient(180deg,rgba(59,69,82,.78) 0%,rgba(59,69,82,.42) 40%,rgba(59,69,82,.95) 100%);
+  --velo:linear-gradient(180deg,rgba(34,41,51,.32) 0%,rgba(34,41,51,.16) 42%,rgba(34,41,51,.58) 100%);
   --barra:rgba(59,69,82,.92);
 }
 
@@ -204,8 +204,9 @@ p{margin:0}
 @media (max-width:768px){.tema,.carattere{display:none}}
 
 /* ---------- hero: foto piena + squadratura tecnica ---------- */
-.hero{position:relative;min-height:100dvh;display:flex;flex-direction:column;justify-content:flex-end;
-  padding:calc(var(--barra-h) + 34px) var(--gutter) 0;overflow:hidden}
+.hero{position:relative;min-height:100dvh;display:flex;flex-direction:column;justify-content:center;
+  align-items:center;
+  padding:calc(var(--barra-h) + 34px) 0 0;overflow:hidden}
 .hero-media{position:absolute;inset:0;z-index:-2;background:var(--fondo-2)}
 .slide{position:absolute;inset:0;opacity:0;transition:opacity 1.1s linear}
 .slide.on{opacity:1}
@@ -220,14 +221,31 @@ p{margin:0}
 .squadra.c{bottom:26px;left:var(--gutter);border-right:0;border-top:0}
 .squadra.d{bottom:26px;right:var(--gutter);border-left:0;border-top:0}
 
-.hero-testo{position:relative;z-index:3;width:100%;max-width:var(--max);margin:0 auto;padding-bottom:clamp(44px,7vh,92px)}
-.hero h1{font-size:calc(clamp(44px,8.4vw,138px)*var(--titolo-scala));
-  letter-spacing:calc(var(--titolo-tracking) - 0.015em);max-width:13ch;text-wrap:balance}
+/* La fascia va da un bordo all'altro: e una banda sulla foto, non un riquadro
+   dentro la griglia. Il testo dentro resta allineato al centro. */
+.hero-fascia{position:relative;z-index:3;width:100%;text-align:center;
+  background:rgba(16,21,28,.72);
+  border-top:1px solid rgba(255,255,255,.18);border-bottom:1px solid rgba(255,255,255,.18);
+  padding:clamp(24px,4.2vh,50px) var(--gutter);
+  backdrop-filter:blur(2px)}
+.hero h1{font-family:var(--font-mono);font-weight:500;
+  font-size:clamp(13px,1.85vw,27px);letter-spacing:.24em;text-transform:uppercase;
+  line-height:1.45;text-wrap:balance;
+  text-shadow:0 2px 24px rgba(0,0,0,.5)}
 .hero h1 em{font-style:normal;color:var(--accento)}
-.hero-sotto{display:flex;flex-wrap:wrap;gap:clamp(20px,4vw,64px);align-items:flex-end;margin-top:clamp(24px,4vh,46px)}
-.hero p{max-width:44ch;font-size:clamp(15px,1.25vw,18px);color:var(--testo-muto)}
-.hero-azioni{display:flex;gap:12px;flex-wrap:wrap}
-.hero .quota{position:relative;z-index:3;max-width:var(--max);margin:0 auto;width:100%;padding-bottom:22px}
+.hero-sotto{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;
+  gap:clamp(20px,3vh,32px);margin-top:clamp(26px,4.4vh,46px);padding:0 var(--gutter);text-align:center}
+.hero-riga{font-family:var(--font-mono);font-size:clamp(10.5px,1.05vw,13px);letter-spacing:.2em;
+  text-transform:uppercase;color:#fff;
+  /* due ombre: una stretta che stacca la lettera anche sul cielo chiaro, una
+     larga che fa da alone. Serve perche sotto la fascia la foto e scoperta. */
+  text-shadow:0 1px 3px rgba(0,0,0,.92),0 2px 26px rgba(0,0,0,.7);
+  /* niente max-width: con la crenatura larga del monospaziato il calcolo in ch
+     sbaglia di parecchio e la riga andava a capo anche quando c'era spazio.
+     Su schermo stretto va a capo da sola, bilanciata. */
+  text-wrap:balance}
+.hero-azioni{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.hero .quota{position:absolute;left:var(--gutter);bottom:22px;z-index:3;margin:0}
 
 /* slot fotografico dichiarato: da sostituire con le foto reali */
 .slot{position:absolute;inset:0;display:grid;place-items:center;background:var(--fondo-2);
@@ -328,6 +346,8 @@ footer{border-top:1px solid var(--filo);background:var(--fondo)}
   .nav-toggle{display:inline-block}
   .nav .btn{display:none}
   .squadra{display:none}
+  .hero-fascia{padding:22px 18px}
+  .hero h1{letter-spacing:.16em;line-height:1.6}
 }
 @media (prefers-reduced-motion:reduce){
   .slide{transition:none}

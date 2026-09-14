@@ -74,23 +74,26 @@ AGGIORNA_IMPIANTI.bat  doppio-click per rigenerare tutto
 assets/foto/impianti/  GENERATE: foto copiate dal sito Diesse Media
 ```
 
-## Come inserire le foto
+## L'hero
 
-Nell'hero ci sono tre riquadri con la misura richiesta al posto delle foto. Per sostituirli, in
-`index.html` cambiare ogni blocco
+Fotografia a tutta pagina con le immagini degli impianti in dissolvenza, e il payoff dentro una
+**fascia orizzontale che attraversa la foto a meta altezza**: sopra e sotto l'immagine resta scoperta,
+ed e li che si vede l'impianto. Scelta fra quattro impaginazioni provate a schermo con
+`fai-prova-hero.py` (monumentale, fascia, manifesto, sospesa).
 
-```html
-<div class="slide on"><div class="slot"><span>Foto impianto 01 ...</span></div></div>
-```
+Due accorgimenti tengono in piedi il testo senza spegnere la fotografia:
 
-con
+- il velo sulla foto e **leggero** (opacita 0.34 in alto, 0.18 a meta, 0.62 in basso): prima era quasi
+  una tenda, e la foto non si vedeva;
+- la leggibilita viene da **due ombre sulle lettere** — una stretta che stacca il segno anche sul cielo
+  chiaro, una larga che fa da alone — invece che da altro scurimento dell'immagine.
 
-```html
-<div class="slide on"><img src="assets/foto/impianto-01.jpg" alt="Impianto SMHUB in ..."></div>
-```
+Le tre foto dell'hero **non sono scritte nel markup**: le prende `js/site.js` dai tre impianti piu
+grandi con foto. Cosi restano allineate all'inventario e non puntano a un file che lo script potrebbe
+cancellare. Se i dati non ci sono, restano i riquadri segnaposto.
 
-Le foto vanno in orizzontale, minimo 1920 x 1080. Aggiungere un impianto significa aggiungere un
-blocco: la sequenza gira da sola su quante slide trova.
+La fascia va da un bordo all'altro dello schermo, quindi `.hero` non ha padding orizzontale: il margine
+laterale ce l'hanno i singoli blocchi.
 
 ## Gli impianti: da dove arrivano i dati
 
