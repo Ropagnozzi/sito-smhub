@@ -115,6 +115,10 @@ html[data-carattere="sans"]{
 
 
 *,*::before,*::after{box-sizing:border-box}
+/* [hidden] vale display:none con specificita zero, quindi qualunque regola di
+   classe che imposti un display (.imp{display:flex}) lo annulla e l'elemento
+   resta a schermo. Serve dirlo qui una volta per tutte. */
+[hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
 html,body{overflow-x:clip}
 body{
