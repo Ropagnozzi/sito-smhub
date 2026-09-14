@@ -157,13 +157,16 @@
         : '<div class="slot"><span>Foto in arrivo</span></div>';
       var dati = [
         ['Formato', imp.dim],
-        ['Superficie', imp.sqm ? imp.sqm + ' m&sup2;' : null],
+        ['Superficie', imp.sqm
+          ? (imp.sqm_stimato ? '~ ' : '') + imp.sqm + ' m&sup2;'
+          : null],
         ['Illuminazione', imp.light ? 'sì' : 'no'],
         ['Tipologia', imp.type]
       ].filter(function (r) { return r[1]; }).map(function (r) {
         return '<div><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd></div>';
       }).join('');
-      return '<article class="imp" id="imp-' + testo(imp.code) + '">' +
+      return '<article class="imp" id="imp-' + testo(imp.code) + '"' +
+               ' data-tipo="' + (imp.type === 'Stand alone' ? 'autoportante' : 'edificio') + '">' +
                '<div class="imp-foto">' + foto + '</div>' +
                '<div class="imp-corpo">' +
                  '<p class="imp-code">' + testo(imp.code) + '</p>' +
@@ -174,15 +177,50 @@
     });
     contenitoreElenco.innerHTML = pezzi.join('');
 
+    /* Filtro per tipologia: 47 schede sono tante, e la differenza fra un
+       impianto su palazzo e uno autoportante e la prima cosa che un cliente
+       vuole separare. Nessuna animazione: le schede appaiono e spariscono. */
+    var gruppi = [
+      ['tutti', 'Tutti', function () { return true; }],
+      ['edificio', 'Su edificio', function (i) { return !autoportante(i); }],
+      ['autoportante', 'Con telaio proprio', autoportante]
+    ];
+    var barra = document.getElementById('filtro-impianti');
+    if (barra) {
+      barra.innerHTML = gruppi.map(function (g) {
+        var quanti = impianti.filter(g[2]).length;
+        return '<button type="button" data-gruppo="' + g[0] + '"' +
+               ' aria-pressed="' + (g[0] === 'tutti') + '">' + g[1] +
+               ' <span>' + quanti + '</span></button>';
+      }).join('');
+      barra.addEventListener('click', function (e) {
+        var tasto = e.target.closest('button');
+        if (!tasto) return;
+        var scelto = tasto.getAttribute('data-gruppo');
+        [].slice.call(barra.querySelectorAll('button')).forEach(function (b) {
+          b.setAttribute('aria-pressed', b === tasto ? 'true' : 'false');
+        });
+        [].slice.call(contenitoreElenco.children).forEach(function (scheda) {
+          scheda.hidden = scelto !== 'tutti' && scheda.getAttribute('data-tipo') !== scelto;
+        });
+      });
+    }
+
     var riepilogo = document.getElementById('conta-impianti');
     if (riepilogo) {
       var mq = impianti.reduce(function (t, i) { return t + (i.sqm || 0); }, 0);
       var illuminati = impianti.filter(function (i) { return i.light; }).length;
+      var autoportanti = impianti.filter(autoportante).length;
       riepilogo.innerHTML =
         voce(impianti.length, 'impianti') +
         voce(migliaia(mq), 'metri quadri di superficie') +
+        voce(autoportanti, 'con telaio proprio') +
         voce(illuminati, 'illuminati');
     }
+  }
+
+  function autoportante(imp) {
+    return imp.type === 'Stand alone';
   }
 
   function migliaia(n) {

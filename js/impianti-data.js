@@ -7,7 +7,7 @@ window.SMHUB_IMPIANTI = [
     "city": "Napoli",
     "pos": "Stazione EAV Piazza Garibaldi banchina treni binario 4",
     "type": "Muro cieco",
-    "dim": "1200 x 300",
+    "dim": "12 x 3",
     "sqm": 36,
     "light": false,
     "photos": [
@@ -21,7 +21,7 @@ window.SMHUB_IMPIANTI = [
     "city": "Napoli",
     "pos": "Stazione EAV Piazza Garibaldi banchina treni binario 1",
     "type": "Muro cieco",
-    "dim": "1200 x 300",
+    "dim": "12 x 3",
     "sqm": 36,
     "light": false,
     "photos": [
@@ -387,15 +387,16 @@ window.SMHUB_IMPIANTI = [
   {
     "code": "NA01",
     "city": "Napoli",
-    "pos": "Piazza Garibaldi fronte Corso a. Lucci - stazione Centrale",
-    "type": "Facciata",
+    "pos": "Piazza Garibaldi fronte Corso A. Lucci - stazione Centrale",
+    "type": "Stand alone",
     "dim": "17 x 8",
-    "sqm": null,
+    "sqm": 136,
     "light": true,
     "photos": [
       "na01-1.jpg",
       "na01-2.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.852507,
     "lng": 14.271571
   },
@@ -403,28 +404,30 @@ window.SMHUB_IMPIANTI = [
     "code": "NA02",
     "city": "Napoli",
     "pos": "Piazza Garibaldi fronte Corso Umberto - stazione Centrale",
-    "type": "Facciata",
+    "type": "Stand alone",
     "dim": "14 x 6",
-    "sqm": null,
+    "sqm": 84,
     "light": true,
     "photos": [
       "na02-1.jpg",
       "na02-2.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.85317,
     "lng": 14.270822
   },
   {
     "code": "NA32",
     "city": "Napoli",
-    "pos": "Piazza Garibaldi fronte Hotel Terminus -stazione Centrale",
-    "type": "Facciata",
+    "pos": "Piazza Garibaldi fronte Hotel Terminus - stazione Centrale",
+    "type": "Stand alone",
     "dim": "14 x 4",
-    "sqm": null,
+    "sqm": 56,
     "light": true,
     "photos": [
       "na32-1.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.852521,
     "lng": 14.27078
   },
@@ -434,11 +437,12 @@ window.SMHUB_IMPIANTI = [
     "pos": "Via C. Rosarrol direzione Via Foria",
     "type": "Facciata",
     "dim": "7 x 8",
-    "sqm": null,
+    "sqm": 56,
     "light": true,
     "photos": [
       "na03-1.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.855482,
     "lng": 14.26506
   },
@@ -448,12 +452,13 @@ window.SMHUB_IMPIANTI = [
     "pos": "Viale F. Ruffo di Calabria Uscita Aereoporto Capodichino",
     "type": "Facciata",
     "dim": "8 x 4",
-    "sqm": null,
+    "sqm": 32,
     "light": true,
     "photos": [
       "na09-1.jpg",
       "na09-2.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.874682,
     "lng": 14.28523
   },
@@ -463,25 +468,27 @@ window.SMHUB_IMPIANTI = [
     "pos": "Via Nuova Poggioreale incrocio Via Ausilio direzione Uscita Città",
     "type": "Facciata",
     "dim": "8 x 4",
-    "sqm": null,
+    "sqm": 32,
     "light": true,
     "photos": [
       "na16-1.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.863074,
     "lng": 14.28374
   },
   {
     "code": "NA13",
     "city": "Napoli",
-    "pos": "Via Domenico Fontana incrocio a. Rocco direzione Piazza Muzii",
+    "pos": "Via Domenico Fontana incrocio A. Rocco direzione Piazza Muzii",
     "type": "Facciata",
     "dim": "6 x 9",
-    "sqm": null,
+    "sqm": 54,
     "light": true,
     "photos": [
       "na13-1.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.85459,
     "lng": 14.228845
   },
@@ -489,28 +496,30 @@ window.SMHUB_IMPIANTI = [
     "code": "NA11",
     "city": "Napoli",
     "pos": "Tangenziale altezza Svincolo Capodichino direzione Centro",
-    "type": "Facciata",
+    "type": "Stand alone",
     "dim": "11 x 4",
-    "sqm": null,
+    "sqm": 44,
     "light": true,
     "photos": [
       "na11-1.jpg",
       "na11-2.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.874769,
     "lng": 14.288231
   },
   {
     "code": "NA17",
     "city": "Napoli",
-    "pos": "Tangenziale Sv. Capodichino direzione Centro Citta'",
-    "type": "Facciata",
+    "pos": "Tangenziale Svincolo Capodichino direzione Centro Città",
+    "type": "Stand alone",
     "dim": "8 x 4",
-    "sqm": null,
+    "sqm": 32,
     "light": true,
     "photos": [
       "na17-1.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.874072,
     "lng": 14.287265
   },
@@ -520,11 +529,12 @@ window.SMHUB_IMPIANTI = [
     "pos": "Via Mascagni incrocio Via De Nardis direzione Via Cilea",
     "type": "Facciata",
     "dim": "6 x 7",
-    "sqm": null,
+    "sqm": 42,
     "light": true,
     "photos": [
       "na14-1.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.844741,
     "lng": 14.221057
   },
@@ -534,12 +544,13 @@ window.SMHUB_IMPIANTI = [
     "pos": "Via Giambattista Marino angolo J. De Gennaro - Stadio Maradona",
     "type": "Facciata",
     "dim": "6 x 6",
-    "sqm": null,
+    "sqm": 36,
     "light": true,
     "photos": [
       "na06-1.jpg",
       "na06-2.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.828856,
     "lng": 14.196072
   },
@@ -547,14 +558,15 @@ window.SMHUB_IMPIANTI = [
     "code": "NA10",
     "city": "Napoli",
     "pos": "Tangenziale altezza Svincolo Capodichino direzione Autostrade",
-    "type": "Facciata",
-    "dim": "9X4.5",
-    "sqm": null,
+    "type": "Stand alone",
+    "dim": "9 x 4,5",
+    "sqm": 40,
     "light": true,
     "photos": [
       "na10-1.jpg",
       "na10-2.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.875306,
     "lng": 14.288729
   },
@@ -564,12 +576,13 @@ window.SMHUB_IMPIANTI = [
     "pos": "Viale Michelangelo direzione Piazza Leonardo",
     "type": "Facciata",
     "dim": "7 x 10",
-    "sqm": null,
+    "sqm": 70,
     "light": true,
     "photos": [
       "na07-1.jpg",
       "na07-2.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.84788,
     "lng": 14.2338
   },
@@ -579,11 +592,12 @@ window.SMHUB_IMPIANTI = [
     "pos": "Via S. Gennaro Ad Antignano incrocio Via Merliani direzione Piazza degli Artisti",
     "type": "Facciata",
     "dim": "6 x 9",
-    "sqm": null,
+    "sqm": 54,
     "light": true,
     "photos": [
       "na08-1.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.847214,
     "lng": 14.229604
   },
@@ -593,11 +607,12 @@ window.SMHUB_IMPIANTI = [
     "pos": "Via Tasso direzione incrocio Via Aniello Falcone",
     "type": "Facciata",
     "dim": "6 x 9",
-    "sqm": null,
+    "sqm": 54,
     "light": true,
     "photos": [
       "na15-1.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.838444,
     "lng": 14.223576
   },
@@ -605,14 +620,15 @@ window.SMHUB_IMPIANTI = [
     "code": "NA18",
     "city": "Napoli",
     "pos": "Via Salomone rotatoria Uscita Aereoporto ingresso Tangenziale Capodichino e Ingr. Autostrade",
-    "type": "Facciata",
+    "type": "Stand alone",
     "dim": "8 x 4",
-    "sqm": null,
+    "sqm": 32,
     "light": true,
     "photos": [
       "na18-1.jpg",
       "na18-2.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.873807,
     "lng": 14.286437
   },
@@ -622,12 +638,13 @@ window.SMHUB_IMPIANTI = [
     "pos": "Via Nuova Agnano angolo Giochi del Mediterraneo",
     "type": "Facciata",
     "dim": "6 x 9",
-    "sqm": null,
+    "sqm": 54,
     "light": true,
     "photos": [
       "na26-1.jpg",
       "na26-2.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.82043,
     "lng": 14.174702
   },
@@ -635,14 +652,15 @@ window.SMHUB_IMPIANTI = [
     "code": "NA22",
     "city": "Napoli",
     "pos": "Via Volta - Marina direzione Centro",
-    "type": "Facciata",
-    "dim": "9x4,5",
-    "sqm": null,
+    "type": "Stand alone",
+    "dim": "9 x 4,5",
+    "sqm": 40,
     "light": true,
     "photos": [
       "na22-1.jpg",
       "na22-2.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.845043,
     "lng": 14.281764
   },
@@ -650,14 +668,15 @@ window.SMHUB_IMPIANTI = [
     "code": "NA23",
     "city": "Napoli",
     "pos": "Via Cinthia fronte ingresso Tangenziale Fuorigrotta",
-    "type": "Facciata",
+    "type": "Stand alone",
     "dim": "8 x 4",
-    "sqm": null,
+    "sqm": 32,
     "light": true,
     "photos": [
       "na23-1.jpg",
       "na23-2.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.834053,
     "lng": 14.190913
   },
@@ -667,26 +686,28 @@ window.SMHUB_IMPIANTI = [
     "pos": "Corso Novara altezza Via Nazionale direzione Piazza Garibaldi stazione Centrale",
     "type": "Facciata",
     "dim": "6 x 9",
-    "sqm": null,
+    "sqm": 54,
     "light": true,
     "photos": [
       "na24-1.jpg",
       "na24-2.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.856386,
     "lng": 14.271022
   },
   {
     "code": "NA25",
     "city": "Napoli",
-    "pos": "Via Giustiniano metri 100 rotatoria Usc. Tangenziale Via Epomeo",
+    "pos": "Via Giustiniano metri 100 rotatoria Uscita Tangenziale Via Epomeo",
     "type": "Facciata",
     "dim": "6 x 9",
-    "sqm": null,
+    "sqm": 54,
     "light": true,
     "photos": [
       "na25-1.jpg"
     ],
+    "sqm_stimato": true,
     "lat": 40.842523,
     "lng": 14.206922
   }

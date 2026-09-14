@@ -126,6 +126,22 @@ Media), si aggiunge all'xlsx una colonna `sito`:
 Finche la colonna non esiste, non cambia niente. Lo script di Diesse Media ignora le colonne che non
 conosce, quindi aggiungerla non rompe l'altro sito.
 
+### Tipologia e superficie
+
+La colonna `type` separa gli impianti che vivono su un edificio da quelli con **telaio proprio**
+(stand alone): e la distinzione che il sito racconta, e alimenta sia il riepilogo sia il filtro sopra
+l'elenco. Lo script accetta le varianti (`stand alone`, `standalone`, `autoportante`, `telaio`) e le
+riporta tutte a una dicitura sola, quindi non conta come viene digitata.
+
+La colonna `sqm` invece e spesso vuota (21 impianti su 47). Quando manca, la superficie viene
+**ricavata da base x altezza** e marcata come stimata: sulla scheda compare con la tilde (`~ 136 m²`).
+La regola e stata verificata sui 26 impianti che il dato ce l'hanno e coincide in 25 casi
+(l'unico scarto e NA84: 6x12 farebbe 72 mq, l'xlsx dice 70). **Il dato scritto nell'xlsx vince sempre
+sul calcolo**: basta riempire la cella e la tilde sparisce da sola.
+
+I formati vengono normalizzati: `9X4.5` e `9x4,5` diventano entrambi `9 x 4,5`, e le misure scritte in
+centimetri (`1200x300`) valgono come metri nel calcolo della superficie.
+
 ### Cosa NON viene portato su SM HUB
 
 Le colonne `pdf` (presentazioni su Drive) e `link_web` (schede su diessemedia.it) sono a marchio

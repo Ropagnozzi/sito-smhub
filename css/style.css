@@ -278,7 +278,17 @@ h2{font-size:calc(clamp(30px,5.4vw,86px)*var(--titolo-scala));
 .conta-n{font-size:clamp(28px,3.4vw,46px);line-height:1;letter-spacing:-0.02em}
 .conta-e{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--tenue)}
 
-.elenco{margin-top:clamp(32px,5vh,58px);display:grid;gap:1px;background:var(--filo);
+.filtro{margin-top:clamp(26px,4vh,40px);display:flex;flex-wrap:wrap;gap:1px;background:var(--filo);
+  border:1px solid var(--filo);width:fit-content;max-width:100%}
+.filtro button{background:var(--fondo);border:0;color:var(--testo-muto);cursor:pointer;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  padding:11px 16px;display:flex;align-items:center;gap:8px}
+.filtro button span{color:var(--tenue);font-size:10px}
+.filtro button:hover{color:var(--testo)}
+.filtro button[aria-pressed="true"]{background:var(--accento);color:var(--su-accento)}
+.filtro button[aria-pressed="true"] span{color:var(--su-accento);opacity:.7}
+
+.elenco{margin-top:clamp(20px,3vh,30px);display:grid;gap:1px;background:var(--filo);
   border:1px solid var(--filo);grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}
 .imp{background:var(--fondo);display:flex;flex-direction:column}
 .imp-foto{position:relative;aspect-ratio:16/9;background:var(--fondo-2);overflow:hidden}

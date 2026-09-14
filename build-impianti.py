@@ -100,6 +100,9 @@ ABBREVIAZIONI = [
     (r'\balt\b\.?',    'altezza '),
     (r'\bfr\b\.?',     'fronte '),
     (r'\bmt\b\.?',     'metri '),
+    (r'\bsv\b\.?',     'svincolo '),
+    (r'\busc\b\.?',    'uscita '),
+    (r'\bciv\b\.?',    'civico '),
 ]
 
 
@@ -121,6 +124,8 @@ def titolo(testo):
     t = re.sub(r'\.(?=[a-zà-ú]{3,})', '. ', t)
     t = re.sub(r'(\d)-(?=[a-zà-ú])', r'\1 - ', t)      # "centro- reggia"
     t = re.sub(r'([a-zà-ú])-\s', r'\1 - ', t)
+    t = re.sub(r'\s-(?=[a-zà-ú])', ' - ', t)          # "terminus -stazione"
+    t = t.replace("citta'", 'città')
     t = re.sub(r'\s+', ' ', t).strip()
 
     fuori = []
@@ -130,7 +135,8 @@ def titolo(testo):
             fuori.append(parola.upper())
         elif any(c.isdigit() for c in parola):
             fuori.append(parola.upper())                # 7X10, NA63, numeri civici
-        elif posizione > 0 and parola.strip('.,;:()') in MINUSCOLE:
+        elif (posizione > 0 and not parola.endswith('.')      # "Corso A. Lucci"
+              and parola.strip('.,;:()') in MINUSCOLE):
             fuori.append(parola)
         else:
             pezzi = parola.split('.')
@@ -157,11 +163,33 @@ def nomefoto(v):
     return os.path.splitext(str(v).strip())[0].strip().lower() + '.jpg'
 
 
+def misure(dim):
+    """'9X4.5 illuminato' -> (9.0, 4.5) in metri, None se il formato non si legge.
+       I formati scritti in centimetri (1200x300) vengono riportati a metri."""
+    d = re.sub(r'\s*(illuminat|luminos)[oa]\s*', '', str(dim or ''), flags=re.I).strip()
+    m = re.match(r'^([\d.,]+)\s*[xX×]\s*([\d.,]+)$', d)
+    if not m:
+        return None
+    try:
+        base, altezza = [float(x.replace(',', '.')) for x in m.groups()]
+    except ValueError:
+        return None
+    if base > 50 and altezza > 50:
+        base, altezza = base / 100, altezza / 100
+    return (base, altezza)
+
+
+def numero_pulito(n):
+    """9.0 -> '9',  4.5 -> '4,5'  (in italiano il separatore e la virgola)."""
+    return ('%g' % n).replace('.', ',')
+
+
 def formato(dim):
     """'7X10 illuminato' -> '7 x 10'. L'illuminazione ha gia una colonna sua."""
-    d = re.sub(r'\s*(illuminat|luminos)[oa]\s*', '', str(dim or ''), flags=re.I).strip()
-    m = re.match(r'^(\d+)\s*[xX×]\s*(\d+)$', d)
-    return '%s x %s' % (m.group(1), m.group(2)) if m else d
+    m = misure(dim)
+    if m is None:
+        return re.sub(r'\s*(illuminat|luminos)[oa]\s*', '', str(dim or ''), flags=re.I).strip()
+    return '%s x %s' % (numero_pulito(m[0]), numero_pulito(m[1]))
 
 
 def main():
@@ -221,6 +249,15 @@ def main():
             'photos': [nomefoto(cella(r, n)) for n in col_foto
                        if cella(r, n) and str(cella(r, n)).strip()],
         }
+        # Superficie: il dato dell'xlsx vince sempre. Quando manca si ricava da
+        # base x altezza (regola verificata: coincide con 25 dei 26 valori gia
+        # presenti) e resta marcata come stimata, cosi il sito puo dirlo.
+        if voce['sqm'] is None:
+            m = misure(dim_grezza)
+            if m:
+                voce['sqm'] = int(round(m[0] * m[1]))
+                voce['sqm_stimato'] = True
+
         flusso = str(cella(r, 'flow') or '').strip()
         if flusso:
             voce['flow'] = flusso
@@ -280,6 +317,9 @@ def main():
     except Exception as e:
         print('Nota: cache-buster non aggiornato (%s)' % e)
 
+    stimate = sum(1 for i in impianti if i.get('sqm_stimato'))
+    if stimate:
+        print('Superfici ricavate da base x altezza (mancavano nell xlsx): %d' % stimate)
     su_mappa = sum(1 for i in impianti if 'lat' in i)
     con_foto = sum(1 for i in impianti if i['photos'])
     mq = sum(i['sqm'] or 0 for i in impianti)
