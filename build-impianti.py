@@ -59,6 +59,32 @@ MINUSCOLE = set(['di', 'del', 'della', 'dello', 'dei', 'degli', 'delle', 'da', '
                  'angolo', 'incrocio', 'direzione', 'altezza', 'fronte', 'metri',
                  'rotatoria', 'banchina', 'binario', 'stazione', 'ingresso', 'treni'])
 
+# Tipologie: nell'xlsx la colonna "type" si scrive a mano, quindi qui si accettano
+# le forme piu probabili e si riportano tutte a una sola dicitura. Serve perche la
+# tipologia non e solo un'etichetta: separa gli impianti che vivono su un edificio
+# da quelli con telaio proprio, che e la distinzione che il sito racconta.
+TIPOLOGIE = [
+    (('stand alone', 'standalone', 'stand-alone', 'autoportante', 'telaio',
+      'palina', 'monofacciale autoportante'), 'Stand alone'),
+    (('facciata', 'parete', 'palazzo', 'edificio'), 'Facciata'),
+    (('muro cieco', 'murocieco', 'muro'), 'Muro cieco'),
+    (('ponteggio', 'impalcatura', 'cantiere'), 'Ponteggio'),
+    (('rotatoria',), 'Rotatoria'),
+]
+
+
+def tipologia(v):
+    """Riporta le varianti scritte a mano a una dicitura sola."""
+    grezzo = re.sub(r'\s+', ' ', str(v or '').strip()).lower()
+    if not grezzo:
+        return ''
+    for varianti, buona in TIPOLOGIE:
+        for variante in varianti:
+            if variante in grezzo:
+                return buona
+    return titolo(v)          # dicitura nuova: la lascio, solo resa leggibile
+
+
 # Abbreviazioni sciolte per esteso: rendono la scheda leggibile a chi compra,
 # non a chi tiene l'archivio. Se una espansione e sbagliata, si corregge qui.
 ABBREVIAZIONI = [
@@ -186,7 +212,7 @@ def main():
             'code':  str(code).strip().upper(),
             'city':  titolo(cella(r, 'city')),
             'pos':   titolo(cella(r, 'pos')),
-            'type':  titolo(cella(r, 'type')),
+            'type':  tipologia(cella(r, 'type')),
             'dim':   formato(dim_grezza),
             'sqm':   int(mq) if mq is not None else None,
             'light': (vero(cella(r, 'light'))
@@ -261,6 +287,11 @@ def main():
           % (len(impianti), su_mappa, con_foto, mq))
     print('Foto: %d copiate, %d orfane rimosse, %d in cartella.'
           % (copiate, orfane, len(servono)))
+    per_tipo = {}
+    for i in impianti:
+        per_tipo[i['type'] or 'senza tipologia'] = per_tipo.get(i['type'] or 'senza tipologia', 0) + 1
+    print('Tipologie: ' + ', '.join('%s %d' % (t, n) for t, n in
+                                    sorted(per_tipo.items(), key=lambda x: -x[1])))
     if esclusi:
         print('%d impianti lasciati a Diesse Media (colonna "sito").' % esclusi)
     if assenti:

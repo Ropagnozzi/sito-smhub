@@ -7,3 +7,6 @@ desktop.ini
 
 # File temporanei di Office (lock quando un file è aperto)
 ~$*
+
+# Foglio di revisione: si rigenera con fai-controllo-tipologie.py, non va pubblicato.
+controllo-tipologie.html
