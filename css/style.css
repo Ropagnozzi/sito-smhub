@@ -231,13 +231,14 @@ html.apre-marchio-attiva .nav-logo .marchio{visibility:hidden}
    foto nascondeva proprio la parte alta, dove stanno i cartelloni. */
 @media (min-aspect-ratio:4/5){
   .hero-media{top:var(--barra-h)}
-  /* Fascia al 60% dell'altezza invece che al centro: la parte alta della foto,
-     dove stanno i cartelloni, resta scoperta. Il secondo termine del min() la
-     fa risalire sugli schermi bassi (portatili), cosi pulsanti e quota restano
-     dentro lo schermo: 330px = fascia + riga + pulsanti + margine sulla quota. */
+  /* Fascia al 66% dell'altezza invece che al centro: la parte alta della foto,
+     dove stanno i cartelloni, resta scoperta (a 1905x912 il cartellone Lete
+     arriva al 65%). Il secondo termine del min() la fa risalire sugli schermi
+     bassi (portatili), cosi pulsanti e quota restano dentro lo schermo:
+     300px = fascia + riga + pulsanti + un minimo di stacco dalla quota. */
   .hero{justify-content:flex-start}
-  .hero-fascia{margin-top:max(0px,min(calc(60dvh - var(--barra-h) - 34px),
-    calc(100dvh - var(--barra-h) - 34px - 330px)))}
+  .hero-fascia{margin-top:max(0px,min(calc(66dvh - var(--barra-h) - 34px),
+    calc(100dvh - var(--barra-h) - 34px - 300px)))}
 }
 .slide{position:absolute;inset:0;opacity:0;transition:opacity 1.1s linear}
 .slide.on{opacity:1}
