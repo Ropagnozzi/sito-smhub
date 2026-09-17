@@ -141,16 +141,57 @@
      l'elenco impianti con le coordinate. */
   var contenitore = document.getElementById('mappa');
   if (contenitore && typeof L !== 'undefined') {
+    /* Navigabile, ma senza rubare lo scorrimento della pagina:
+       - computer: pulsanti, trascinamento, doppio clic, e zoom con la rotella
+         SOLO tenendo Ctrl (la rotella da sola continua a scorrere la pagina);
+       - schermi touch: un dito scorre la pagina, due dita spostano e ingrandiscono.
+         Con il trascinamento spento Leaflet mette touch-action: pan-x pan-y, cosi
+         il browser tiene lo scorrimento e passa alla mappa il gesto a due dita. */
+    var touch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
     var mappa = L.map(contenitore, {
       center: [40.8518, 14.2681],
       zoom: 12,
+      minZoom: 10,
+      maxZoom: 18,
       zoomControl: false,
-      dragging: false,
+      dragging: !touch,
       scrollWheelZoom: false,
-      doubleClickZoom: false,
-      touchZoom: false,
-      keyboard: false
+      doubleClickZoom: true,
+      touchZoom: true,
+      keyboard: true
     });
+    L.control.zoom({ position: 'topright', zoomInTitle: 'Ingrandisci', zoomOutTitle: 'Riduci' }).addTo(mappa);
+
+    // avviso breve sopra la mappa, per chi prova il gesto "sbagliato"
+    var avviso = document.createElement('p');
+    avviso.className = 'mappa-avviso';
+    avviso.setAttribute('aria-live', 'polite');
+    contenitore.appendChild(avviso);
+    var avvisoTimer = null;
+    function avvisa(testoAvviso) {
+      avviso.textContent = testoAvviso;
+      avviso.classList.add('visibile');
+      clearTimeout(avvisoTimer);
+      avvisoTimer = setTimeout(function () { avviso.classList.remove('visibile'); }, 1600);
+    }
+
+    // Rotella: l'ascolto in fase di cattura arriva prima di quello di Leaflet, e
+    // accende o spegne lo zoom a rotella per quel singolo evento.
+    contenitore.addEventListener('wheel', function (e) {
+      if (e.ctrlKey || e.metaKey) {
+        mappa.scrollWheelZoom.enable();
+      } else {
+        mappa.scrollWheelZoom.disable();
+        avvisa(/Mac/.test(navigator.platform) ? 'Tieni premuto ⌘ e usa la rotella per ingrandire'
+                                               : 'Tieni premuto Ctrl e usa la rotella per ingrandire');
+      }
+    }, { capture: true, passive: true });
+
+    if (touch) {
+      contenitore.addEventListener('touchmove', function (e) {
+        if (e.touches.length === 1) avvisa('Usa due dita per muovere la mappa');
+      }, { passive: true });
+    }
     // tile OpenStreetMap senza chiave: la resa scura si ottiene invertendo il
     // pannello delle tile via CSS (le tile scure di CARTO ora richiedono una API key)
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -187,7 +228,30 @@
           });
         });
       });
-      mappa.fitBounds(gruppo.getBounds().pad(0.15));
+      var tuttiGliImpianti = gruppo.getBounds().pad(0.15);
+      mappa.fitBounds(tuttiGliImpianti);
+
+      // sotto + e -: torna alla vista d'insieme dopo aver ingrandito
+      var Insieme = L.Control.extend({
+        options: { position: 'topright' },
+        onAdd: function () {
+          var barra = L.DomUtil.create('div', 'leaflet-bar mappa-insieme');
+          var tasto = L.DomUtil.create('a', '', barra);
+          tasto.href = '#';
+          tasto.setAttribute('role', 'button');
+          tasto.title = 'Torna a tutti gli impianti';
+          tasto.setAttribute('aria-label', 'Torna a tutti gli impianti');
+          tasto.innerHTML = '&#x2922;';
+          L.DomEvent.disableClickPropagation(barra);
+          L.DomEvent.on(tasto, 'click', function (e) {
+            L.DomEvent.preventDefault(e);
+            mappa.closePopup();
+            mappa.flyToBounds(tuttiGliImpianti, { duration: 0.6 });
+          });
+          return barra;
+        }
+      });
+      new Insieme().addTo(mappa);
       if (nota) nota.textContent = conCoordinate.length + ' impianti sulla mappa';
     } else if (nota) {
       nota.textContent = 'Posizioni degli impianti in caricamento';
@@ -201,9 +265,16 @@
   if (contenitoreElenco) {
     var impianti = elenco();
     var pezzi = impianti.map(function (imp) {
-      var foto = imp.photos && imp.photos.length
-        ? '<img loading="lazy" decoding="async" src="assets/foto/impianti/' + imp.photos[0] +
-          '" alt="Impianto ' + testo(imp.code) + ' in ' + testo(imp.pos) + ', Napoli">'
+      // la foto e un pulsante che apre la galleria, come le miniature della mappa
+      var quante = imp.photos ? imp.photos.length : 0;
+      var foto = quante
+        ? '<button type="button" class="imp-apri" data-codice="' + testo(imp.code) + '" ' +
+            'aria-label="Apri ' + (quante > 1 ? 'le ' + quante + ' foto' : 'la foto') +
+            ' dell\'impianto ' + testo(imp.code) + '">' +
+            '<img loading="lazy" decoding="async" src="assets/foto/impianti/' + imp.photos[0] +
+            '" alt="Impianto ' + testo(imp.code) + ' in ' + testo(imp.pos) + ', Napoli">' +
+            (quante > 1 ? '<span class="imp-quante">' + quante + ' foto</span>' : '') +
+          '</button>'
         : '<div class="slot"><span>Foto in arrivo</span></div>';
       var dati = [
         ['Formato', imp.dim],
@@ -226,6 +297,15 @@
              '</article>';
     });
     contenitoreElenco.innerHTML = pezzi.join('');
+
+    // un solo ascolto per tutte le schede
+    contenitoreElenco.addEventListener('click', function (e) {
+      var b = e.target.closest('.imp-apri');
+      if (!b) return;
+      var codice = b.getAttribute('data-codice');
+      var imp = impianti.filter(function (i) { return i.code === codice; })[0];
+      apriGalleria(imp, 0, b);
+    });
 
     /* Filtro per tipologia: 47 schede sono tante, e la differenza fra un
        impianto su palazzo e uno autoportante e la prima cosa che un cliente

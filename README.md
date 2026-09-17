@@ -152,7 +152,23 @@ corti (sotto 720 px di altezza) la riga sparisce e il blocco si compatta. Verifi
   (`hero-01.jpg`...; 5,9 MB diventati 1,4 MB) e le scrive in `js/impianti-data.js`.
 - **Tablet e computer** non le usano. Ruotando il telefono la sequenza si ricostruisce.
 
-## Mappa: popup e galleria
+## Mappa: zoom, popup e galleria
+
+La mappa e navigabile senza rubare lo scorrimento della pagina:
+
+- **computer**: pulsanti + e -, trascinamento, doppio clic; la rotella ingrandisce **solo con Ctrl**
+  (Cmd su Mac), altrimenti scorre la pagina e compare un avviso. Il controllo sta in un ascolto `wheel` in
+  fase di cattura, che accende o spegne lo zoom a rotella di Leaflet prima che Leaflet riceva l'evento.
+- **schermi touch** (`hover: none` e `pointer: coarse`): un dito scorre la pagina, **due dita** spostano e
+  ingrandiscono; con un dito compare "Usa due dita per muovere la mappa". Funziona perche col trascinamento
+  spento Leaflet imposta `touch-action: pan-x pan-y` e il pizzico sposta anche la mappa.
+- sotto + e - c'e **"Torna a tutti gli impianti"**. Zoom tra 10 e 18.
+
+Per provarlo nel browser integrato (che non disegna fotogrammi) serve una copia della pagina con
+`requestAnimationFrame` simulato da un timer, caricata PRIMA di Leaflet: Leaflet si salva la funzione
+all'avvio.
+
+Le foto delle **schede** aprono la stessa galleria della mappa; con due foto compare l'etichetta "2 foto".
 
 Cliccando un segnaposto si apre un popup con le **miniature delle foto** dell'impianto (una a tutta
 larghezza, due affiancate; "Foto in arrivo" se non ce ne sono), poi codice, posizione e dati. Ogni
