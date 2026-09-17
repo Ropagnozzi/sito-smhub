@@ -128,10 +128,17 @@ cancellare. Se i dati non ci sono, restano i riquadri segnaposto.
 La fascia va da un bordo all'altro dello schermo, quindi `.hero` non ha padding orizzontale: il margine
 laterale ce l'hanno i singoli blocchi.
 
+**Inquadratura su desktop.** La foto parte **sotto la barra** (la barra e quasi opaca e prima copriva
+proprio la parte alta, dove stanno i cartelloni) e il ritaglio e ancorato in alto
+(`object-position: 50% 15%`): sui monitor piu larghi del 16:9, come un 1920x1080, la foto perde una
+striscia sopra e sotto, e cosi il taglio cade quasi tutto sulla strada.
+
 **Su schermo verticale** (telefoni, tablet in piedi) l'impaginazione cambia: una foto 16:9 a tutto
 schermo verrebbe tagliata ai lati fino a una striscia centrale, e l'impianto, spesso di lato, uscirebbe
 dall'inquadratura. Li la foto sta **intera in alto** (16:9, senza tagli e senza velo) e fascia, riga e
-pulsanti scendono sotto, sul fondo acciaio. Regola: `@media (orientation:portrait) and (max-width:1100px)`.
+pulsanti scendono sotto, sul fondo acciaio. Regola: `@media (max-aspect-ratio:4/5) and (max-width:1100px)`:
+non `orientation:portrait`, perche una finestra del browser affiancata a meta monitor (960x1000) e
+verticale per un soffio e prendeva l'impaginazione dei tablet.
 
 **Sui telefoni con le foto verticali** (fino a 600 px, in verticale) l'hero torna a tutto schermo con foto
 scattate apposta: classe `.hero-verticale`, messa da `js/site.js` solo se `SMHUB_HERO_MOBILE` non e vuoto.
