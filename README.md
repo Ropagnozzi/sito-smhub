@@ -133,6 +133,10 @@ proprio la parte alta, dove stanno i cartelloni) e il ritaglio e ancorato in alt
 (`object-position: 50% 15%`): sui monitor piu larghi del 16:9, come un 1920x1080, la foto perde una
 striscia sopra e sotto, e cosi il taglio cade quasi tutto sulla strada.
 
+**La fascia su desktop sta al 60% dell'altezza**, non al centro, per lasciare scoperta la parte alta
+della foto. Sugli schermi bassi risale quanto basta perche pulsanti e quota restino nello schermo
+(a 1366x640 finisce al 48%). Regola in `css/style.css`, blocco `@media (min-aspect-ratio:4/5)`.
+
 **Su schermo verticale** (telefoni, tablet in piedi) l'impaginazione cambia: una foto 16:9 a tutto
 schermo verrebbe tagliata ai lati fino a una striscia centrale, e l'impianto, spesso di lato, uscirebbe
 dall'inquadratura. Li la foto sta **intera in alto** (16:9, senza tagli e senza velo) e fascia, riga e
