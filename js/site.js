@@ -12,24 +12,60 @@
   /* I riquadri dell'hero si riempiono con le foto degli impianti piu grandi:
      cosi restano allineati all'inventario e non puntano a un file che un domani
      lo script potrebbe cancellare. Senza dati restano i segnaposto. */
-  var vetrina = elenco()
+  /* Sul telefono in verticale, se ci sono le foto scattate apposta
+     (assets/foto/hero-mobile/), l'hero torna a tutto schermo con quelle:
+     classe .hero-verticale. Altrimenti resta l'impaginazione del CSS.
+     Ruotando il telefono la sequenza si ricostruisce. */
+  var sequenza = document.getElementById('sequenza');
+  var hero = sequenza && sequenza.closest('.hero');
+  var segnaposto = sequenza ? sequenza.innerHTML : '';
+  var orizzontali = elenco()
     .filter(function (i) { return i.photos && i.photos.length; })
-    .sort(function (a, b) { return (b.sqm || 0) - (a.sqm || 0); });
-  [].slice.call(document.querySelectorAll('#sequenza .slide')).forEach(function (slide, i) {
-    var imp = vetrina[i];
-    if (!imp) return;
-    slide.innerHTML = '<img src="assets/foto/impianti/' + imp.photos[0] + '"' +
-      (i === 0 ? '' : ' loading="lazy"') + ' decoding="async" alt="">';
-  });
+    .sort(function (a, b) { return (b.sqm || 0) - (a.sqm || 0); })
+    .slice(0, 3)
+    .map(function (i) { return 'assets/foto/impianti/' + i.photos[0]; });
+  var verticali = (Array.isArray(window.SMHUB_HERO_MOBILE) ? window.SMHUB_HERO_MOBILE : [])
+    .map(function (f) { return 'assets/foto/hero-mobile/' + f; });
+  // 600px e non 768: le foto verticali sono pensate per i telefoni; su un tablet
+  // in piedi verrebbero rifilate di oltre un terzo, e li resta la foto intera.
+  var telefono = window.matchMedia('(max-width: 600px) and (orientation: portrait)');
 
-  var slides = [].slice.call(document.querySelectorAll('#sequenza .slide'));
-  if (slides.length > 1 && !pocoMoto) {
-    var indice = 0;
+  function costruisciSequenza() {
+    if (!sequenza) return;
+    var usaVerticali = telefono.matches && verticali.length > 0;
+    var foto = usaVerticali ? verticali : orizzontali;
+    hero.classList.toggle('hero-verticale', usaVerticali);
+    if (!foto.length) { sequenza.innerHTML = segnaposto; return; }
+    sequenza.innerHTML = foto.map(function (src, i) {
+      return '<div class="slide' + (i === 0 ? ' on' : '') + '"><img src="' + src + '"' +
+        (i === 0 ? '' : ' loading="lazy"') + ' decoding="async" alt=""></div>';
+    }).join('');
+  }
+  // Si ricostruisce solo quando la condizione cambia davvero. Tre ascolti invece
+  // di uno: l'evento della media query non arriva ovunque (Safari prima della
+  // 14 conosce solo addListener), il ridimensionamento e la rotazione si.
+  var eraTelefono = null;
+  function seCambia() {
+    if (telefono.matches === eraTelefono) return;
+    eraTelefono = telefono.matches;
+    costruisciSequenza();
+  }
+  seCambia();
+  if (telefono.addEventListener) telefono.addEventListener('change', seCambia);
+  else if (telefono.addListener) telefono.addListener(seCambia);
+  window.addEventListener('resize', seCambia);
+  window.addEventListener('orientationchange', seCambia);
+
+  if (!pocoMoto) {
     setInterval(function () {
-      if (document.hidden) return;
-      slides[indice].classList.remove('on');
-      indice = (indice + 1) % slides.length;
-      slides[indice].classList.add('on');
+      if (document.hidden || !sequenza) return;
+      // le slide si rileggono a ogni giro: la sequenza puo essere stata ricostruita
+      var slides = [].slice.call(sequenza.querySelectorAll('.slide'));
+      if (slides.length < 2) return;
+      var ora = slides.findIndex(function (s) { return s.classList.contains('on'); });
+      if (ora < 0) ora = 0;
+      slides[ora].classList.remove('on');
+      slides[(ora + 1) % slides.length].classList.add('on');
     }, 5200);
   }
 

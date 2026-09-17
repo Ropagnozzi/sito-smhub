@@ -381,6 +381,30 @@ footer{border-top:1px solid var(--filo);background:var(--fondo)}
   .hero-sotto{margin-top:26px}
   .hero-riga{text-shadow:none}
   .hero .quota{position:static;margin:30px var(--gutter) 0;align-self:stretch}
+
+  /* Con le foto verticali scattate apposta (classe messa da js/site.js) l'hero
+     torna a tutto schermo. Fascia, riga e pulsanti scendono in fondo: la meta
+     alta dello schermo resta libera, ed e li che nelle foto sta l'impianto. */
+  .hero.hero-verticale{min-height:100dvh;justify-content:flex-end;padding:var(--barra-h) 0 28px}
+  .hero-verticale .hero-media{position:absolute;inset:0;z-index:-2;aspect-ratio:auto}
+  /* sui telefoni piu corti la foto si rifila sopra e sotto: si taglia soprattutto
+     in basso (strada), perche i cartelloni stanno in alto */
+  .hero-verticale .slide img{object-position:50% 15%}
+  .hero-verticale .hero-velo{display:block;
+    background:linear-gradient(180deg,rgba(22,27,34,.30) 0%,rgba(22,27,34,0) 16%,
+      rgba(22,27,34,0) 46%,rgba(22,27,34,.55) 62%,rgba(22,27,34,.86) 100%)}
+  .hero-verticale .hero-fascia{border-top:1px solid rgba(255,255,255,.18)}
+  .hero-verticale .hero-sotto{margin-top:20px;gap:16px}
+  .hero-verticale .hero-riga{text-shadow:0 1px 3px rgba(0,0,0,.92),0 2px 26px rgba(0,0,0,.7)}
+  .hero-verticale .quota{display:none}
+}
+
+/* Telefoni corti (iPhone SE e simili): il blocco di testo si compatta, se no la
+   fascia risale fino a coprire la parte bassa dei cartelloni piu alti. */
+@media (orientation:portrait) and (max-width:768px) and (max-height:720px){
+  .hero-verticale .hero-riga{display:none}
+  .hero-verticale .hero-fascia{padding:16px 18px}
+  .hero-verticale .hero-sotto{margin-top:16px;gap:12px}
 }
 @media (prefers-reduced-motion:reduce){
   .slide{transition:none}

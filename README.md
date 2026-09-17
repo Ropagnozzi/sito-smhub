@@ -133,6 +133,18 @@ schermo verrebbe tagliata ai lati fino a una striscia centrale, e l'impianto, sp
 dall'inquadratura. Li la foto sta **intera in alto** (16:9, senza tagli e senza velo) e fascia, riga e
 pulsanti scendono sotto, sul fondo acciaio. Regola: `@media (orientation:portrait) and (max-width:1100px)`.
 
+**Sui telefoni con le foto verticali** (fino a 600 px, in verticale) l'hero torna a tutto schermo con foto
+scattate apposta: classe `.hero-verticale`, messa da `js/site.js` solo se `SMHUB_HERO_MOBILE` non e vuoto.
+Fascia, riga e pulsanti scendono in fondo, cosi la meta alta resta libera per i cartelloni; sui telefoni
+corti (sotto 720 px di altezza) la riga sparisce e il blocco si compatta. Verificato: la fascia comincia al
+67% della foto su 812 px e al 59% su 667 px, sotto tutti i cartelloni delle foto attuali.
+
+- **Dove si mettono**: gli originali in `assets/foto/mobile/` (fuori dal repo, pesano oltre un mega),
+  1080 x 2340 px, ordine alfabetico. Istruzioni di inquadratura nel `LEGGIMI.txt` della cartella.
+- **Cosa si pubblica**: `AGGIORNA_IMPIANTI.bat` ne fa copie compresse in `assets/foto/hero-mobile/`
+  (`hero-01.jpg`...; 5,9 MB diventati 1,4 MB) e le scrive in `js/impianti-data.js`.
+- **Tablet e computer** non le usano. Ruotando il telefono la sequenza si ricostruisce.
+
 ## Gli impianti: da dove arrivano i dati
 
 SM HUB e Diesse Media sono **due soggetti autonomi**, ma i maxi impianti sono gli stessi. Per non

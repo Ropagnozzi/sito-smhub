@@ -12,3 +12,9 @@ desktop.ini
 controllo-tipologie.html
 lockup-payoff.html
 prova-hero.html
+
+# Originali delle foto verticali (pesanti): nel sito vanno le copie in hero-mobile/.
+assets/foto/mobile/*
+!assets/foto/mobile/LEGGIMI.txt
+# Promemoria di quale originale ha generato ogni copia: servono solo in locale.
+assets/foto/hero-mobile/*.da

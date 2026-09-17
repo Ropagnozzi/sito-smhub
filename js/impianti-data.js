@@ -712,3 +712,5 @@ window.SMHUB_IMPIANTI = [
     "lng": 14.206922
   }
 ];
+/* Foto verticali dell hero su telefono (assets/foto/hero-mobile/). */
+window.SMHUB_HERO_MOBILE = ["hero-01.jpg", "hero-02.jpg", "hero-03.jpg", "hero-04.jpg", "hero-05.jpg"];

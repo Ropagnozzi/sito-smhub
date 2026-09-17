@@ -40,6 +40,62 @@ FOTO_DA  = os.path.join(QUI, '..', 'sito-diessemedia', 'assets', 'foto', 'maxi')
 FOTO_A   = os.path.join(QUI, 'assets', 'foto', 'impianti')
 USCITA   = os.path.join(QUI, 'js', 'impianti-data.js')
 
+# Foto verticali per l'hero su telefono. Gli ORIGINALI stanno in
+# assets/foto/mobile/ (esclusa dal repo: pesano oltre un mega l'una); qui se
+# ne ricavano copie leggere in assets/foto/hero-mobile/, che sono quelle
+# pubblicate. Ordine: alfabetico sui nomi degli originali.
+MOBILE_DA = os.path.join(QUI, 'assets', 'foto', 'mobile')
+MOBILE_A = os.path.join(QUI, 'assets', 'foto', 'hero-mobile')
+MOBILE_MISURA = (1080, 2340)
+
+
+def leggi(percorso):
+    try:
+        with open(percorso, encoding='utf-8') as f:
+            return f.read().strip()
+    except (IOError, OSError):
+        return None
+
+
+def foto_mobile():
+    """Comprime le foto verticali e restituisce i nomi pubblicati, in ordine."""
+    if not os.path.isdir(MOBILE_DA):
+        return []
+    originali = sorted(f for f in os.listdir(MOBILE_DA)
+                       if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp')))
+    try:
+        from PIL import Image, ImageOps
+    except ImportError:
+        print('ATTENZIONE: manca Pillow (pip install pillow): foto verticali non preparate.')
+        return []
+    if not os.path.isdir(MOBILE_A):
+        os.makedirs(MOBILE_A)
+    pubblicate = []
+    for n, nome in enumerate(originali, 1):
+        uscita = 'hero-%02d.jpg' % n
+        sorgente = os.path.join(MOBILE_DA, nome)
+        destinazione = os.path.join(MOBILE_A, uscita)
+        # accanto a ogni copia, un promemoria di quale originale l'ha generata:
+        # se l'ordine cambia, la copia va rifatta anche se e piu recente
+        firma = destinazione + '.da'
+        if (not os.path.exists(destinazione) or leggi(firma) != nome
+                or os.path.getmtime(sorgente) > os.path.getmtime(destinazione)):
+            im = ImageOps.exif_transpose(Image.open(sorgente)).convert('RGB')
+            if im.size != MOBILE_MISURA:
+                print('Nota: %s e %dx%d, riportata a %dx%d'
+                      % ((nome,) + im.size + MOBILE_MISURA))
+                im = ImageOps.fit(im, MOBILE_MISURA, Image.LANCZOS)
+            im.save(destinazione, 'JPEG', quality=78, optimize=True, progressive=True)
+            with open(firma, 'w', encoding='utf-8') as f:
+                f.write(nome)
+        pubblicate.append(uscita)
+    # via le copie che non corrispondono piu a un originale
+    for f in os.listdir(MOBILE_A):
+        base = f[:-3] if f.endswith('.da') else f
+        if base not in pubblicate:
+            os.remove(os.path.join(MOBILE_A, f))
+    return pubblicate
+
 # Nell'xlsx le posizioni sono scritte TUTTE IN MAIUSCOLO e piene di abbreviazioni
 # attaccate ("VIA MARINA ANG.GIANTURCO DIR.CENTRO"). Qui diventano leggibili: e il
 # primo pezzo del "taglio autonomo" di SM HUB, visto che il dato e lo stesso ma il
@@ -295,12 +351,17 @@ def main():
             os.remove(os.path.join(FOTO_A, f))
             orfane += 1
 
+    # ---- foto verticali dell'hero ----
+    verticali = foto_mobile()
+
     # ---- file dati ----
     corpo = json.dumps(impianti, ensure_ascii=False, indent=2)
     js = ('/* Generato da build-impianti.py a partire da maxi-impianti.xlsx del sito\n'
           '   Diesse Media: i due siti sono autonomi ma gli impianti sono gli stessi.\n'
           '   NON modificare a mano: le correzioni vanno fatte nell xlsx. */\n'
-          'window.SMHUB_IMPIANTI = ' + corpo + ';\n')
+          'window.SMHUB_IMPIANTI = ' + corpo + ';\n'
+          '/* Foto verticali dell hero su telefono (assets/foto/hero-mobile/). */\n'
+          'window.SMHUB_HERO_MOBILE = ' + json.dumps(verticali) + ';\n')
     with open(USCITA, 'w', encoding='utf-8', newline='\n') as f:
         f.write(js)
 
@@ -320,6 +381,9 @@ def main():
     stimate = sum(1 for i in impianti if i.get('sqm_stimato'))
     if stimate:
         print('Superfici ricavate da base x altezza (mancavano nell xlsx): %d' % stimate)
+    if verticali:
+        peso = sum(os.path.getsize(os.path.join(MOBILE_A, f)) for f in verticali) // 1024
+        print('Hero su telefono: %d foto verticali (%d KB in tutto).' % (len(verticali), peso))
     su_mappa = sum(1 for i in impianti if 'lat' in i)
     con_foto = sum(1 for i in impianti if i['photos'])
     mq = sum(i['sqm'] or 0 for i in impianti)

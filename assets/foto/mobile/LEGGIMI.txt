@@ -1,0 +1,20 @@
+FOTO VERTICALI PER L'HERO SU TELEFONO
+
+Qui vanno gli ORIGINALI (non finiscono nel sito pubblicato: sono pesanti).
+Lanciando AGGIORNA_IMPIANTI.bat ne vengono fatte copie leggere in
+assets/foto/hero-mobile/, che sono quelle messe online.
+
+Dimensione: 1080 x 2340 px (verticale, rapporto 9:19,5)
+Formato:    JPG (vanno bene anche PNG o WEBP)
+Quante:     da 3 a 5
+Ordine:     alfabetico sul nome (es. 01-garibaldi.jpg, 02-marina.jpg)
+
+Inquadratura:
+  - il primo 10% in alto resta sotto la barra con il logo
+  - l'impianto va nella parte ALTA, tra il 10% e il 55% dell'altezza
+  - dal 60% in giu ci sono fascia, testo e pulsanti: strada, auto e persone
+    vanno benissimo, il cartellone no
+  - sui telefoni corti la foto si rifila soprattutto in basso
+
+Solo per telefoni (fino a 600 px di larghezza): tablet e computer
+continuano a usare le foto orizzontali degli impianti.
