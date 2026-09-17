@@ -128,6 +128,11 @@ cancellare. Se i dati non ci sono, restano i riquadri segnaposto.
 La fascia va da un bordo all'altro dello schermo, quindi `.hero` non ha padding orizzontale: il margine
 laterale ce l'hanno i singoli blocchi.
 
+**Su schermo verticale** (telefoni, tablet in piedi) l'impaginazione cambia: una foto 16:9 a tutto
+schermo verrebbe tagliata ai lati fino a una striscia centrale, e l'impianto, spesso di lato, uscirebbe
+dall'inquadratura. Li la foto sta **intera in alto** (16:9, senza tagli e senza velo) e fascia, riga e
+pulsanti scendono sotto, sul fondo acciaio. Regola: `@media (orientation:portrait) and (max-width:1100px)`.
+
 ## Gli impianti: da dove arrivano i dati
 
 SM HUB e Diesse Media sono **due soggetti autonomi**, ma i maxi impianti sono gli stessi. Per non

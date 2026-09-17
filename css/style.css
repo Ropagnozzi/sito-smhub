@@ -368,6 +368,20 @@ footer{border-top:1px solid var(--filo);background:var(--fondo)}
   .hero-fascia{padding:22px 18px}
   .hero h1{letter-spacing:.16em;line-height:1.6}
 }
+
+/* Schermo verticale (telefoni, tablet in piedi): una foto 16:9 a tutto schermo
+   verrebbe tagliata ai lati fino a lasciare una striscia centrale, e l'impianto,
+   che spesso sta di lato, finirebbe fuori. Qui la foto si vede INTERA in alto,
+   pulita, senza velo; fascia, riga e pulsanti stanno sotto, sul fondo acciaio. */
+@media (orientation:portrait) and (max-width:1100px){
+  .hero{min-height:0;justify-content:flex-start;padding:var(--barra-h) 0 30px}
+  .hero-media{position:relative;inset:auto;z-index:0;width:100%;aspect-ratio:16/9;flex:none}
+  .hero-velo{display:none}
+  .hero-fascia{border-top:0}
+  .hero-sotto{margin-top:26px}
+  .hero-riga{text-shadow:none}
+  .hero .quota{position:static;margin:30px var(--gutter) 0;align-self:stretch}
+}
 @media (prefers-reduced-motion:reduce){
   .slide{transition:none}
   .luce i{animation:none!important;transform:none}
