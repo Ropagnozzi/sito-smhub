@@ -309,6 +309,56 @@ h2{font-size:calc(clamp(30px,5.4vw,86px)*var(--titolo-scala));
 #mappa .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) grayscale(.55) brightness(.78) contrast(1.04)}
 .leaflet-control-attribution{background:var(--barra)!important;color:var(--tenue)!important;font-family:var(--font-mono);font-size:10px}
 .leaflet-control-attribution a{color:var(--testo-muto)!important}
+
+/* popup degli impianti: lo stesso acciaio del sito, spigolo vivo, miniature in alto */
+.pop-impianto .leaflet-popup-content-wrapper{background:var(--fondo);color:var(--testo);
+  border:1px solid var(--filo-forte);border-radius:0;box-shadow:0 12px 32px rgba(0,0,0,.45);padding:0}
+.pop-impianto .leaflet-popup-content{margin:0;width:250px!important;font-family:var(--font-testo);line-height:1.4}
+.pop-impianto .leaflet-popup-tip{background:var(--fondo);border:1px solid var(--filo-forte);box-shadow:none}
+.pop-impianto a.leaflet-popup-close-button{color:#fff;width:28px;height:28px;font:20px/26px var(--font-mono);
+  background:rgba(16,21,28,.72);top:0;right:0}
+.pop-foto{display:grid;gap:1px;background:var(--filo)}
+.pop-foto.conta-2{grid-template-columns:1fr 1fr}
+.pop-miniatura{display:block;padding:0;border:0;margin:0;background:var(--fondo-2);cursor:zoom-in;
+  aspect-ratio:16/9;overflow:hidden;position:relative}
+.pop-miniatura img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
+@media (hover:hover){.pop-miniatura:hover img{transform:scale(1.06)}}
+.pop-miniatura:focus-visible{outline:2px solid var(--accento);outline-offset:-2px}
+/* prefisso .pop-impianto: Leaflet da ai <p> dei popup un margine piu specifico di una classe sola */
+.pop-impianto .pop-senza{margin:0;padding:18px 14px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--tenue);background:var(--fondo-2)}
+.pop-impianto .pop-code{margin:12px 14px 0;font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;color:var(--accento)}
+.pop-impianto .pop-pos{margin:5px 14px 0;font-size:14px}
+.pop-impianto .pop-dati{margin:8px 14px 14px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--tenue)}
+
+/* ---------- galleria a tutto schermo (foto dal popup) ---------- */
+html.galleria-aperta{overflow:hidden}
+.galleria{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;
+  gap:clamp(8px,2vw,28px);padding:clamp(56px,7vh,80px) clamp(8px,2vw,28px) clamp(20px,4vh,40px);
+  background:rgba(12,15,20,.94)}
+.galleria figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:14px;
+  min-width:0;max-width:min(1400px,100%);touch-action:pan-y}
+.galleria img{max-width:100%;max-height:calc(100dvh - 190px);object-fit:contain;display:block;
+  border:1px solid var(--filo);background:var(--fondo-2);user-select:none;-webkit-user-drag:none}
+.galleria figcaption{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 16px;text-align:center;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--tenue)}
+.galleria .g-code{color:var(--accento)}
+.galleria .g-pos{color:var(--testo);text-transform:none;letter-spacing:0;font-family:var(--font-testo);font-size:15px;text-wrap:balance}
+.galleria-chiudi,.galleria-freccia{flex:none;border:1px solid var(--filo-forte);background:rgba(47,55,66,.8);
+  color:#fff;cursor:pointer;font-family:var(--font-mono);line-height:1}
+.galleria-chiudi{position:absolute;top:clamp(12px,2vh,20px);right:clamp(12px,2vw,24px);
+  width:44px;height:44px;font-size:26px}
+.galleria-freccia{width:48px;height:64px;font-size:34px}
+@media (hover:hover){.galleria-chiudi:hover,.galleria-freccia:hover{background:var(--accento);color:var(--su-accento)}}
+.galleria-chiudi:focus-visible,.galleria-freccia:focus-visible{outline:2px solid var(--accento);outline-offset:2px}
+/* su telefono le frecce scendono in basso ai lati, la foto prende tutta la larghezza */
+@media (max-width:700px){
+  .galleria{padding:64px 8px 90px}
+  .galleria-freccia{position:absolute;bottom:18px;width:56px;height:52px}
+  .galleria-freccia.prec{left:calc(50% - 64px)}
+  .galleria-freccia.succ{right:calc(50% - 64px)}
+}
 .mappa-nota{position:absolute;left:0;bottom:0;z-index:400;background:var(--fondo);border-top:1px solid var(--filo);
   border-right:1px solid var(--filo);padding:12px 18px;
   font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--tenue)}

@@ -167,12 +167,26 @@
       conCoordinate.forEach(function (imp) {
         L.circleMarker([imp.lat, imp.lng], {
           radius: 6, color: '#009ee4', weight: 2, fillColor: '#009ee4', fillOpacity: 0.6
-        }).bindPopup(
-          '<strong>' + testo(imp.code) + '</strong><br>' + testo(imp.pos) +
-          '<br>' + testo(imp.dim) + (imp.sqm ? ' &middot; ' + imp.sqm + ' m&sup2;' : '')
-        ).addTo(gruppo);
+        }).bindPopup(contenutoPopup(imp), {
+          className: 'pop-impianto', minWidth: 250, maxWidth: 250
+        }).addTo(gruppo);
       });
       gruppo.addTo(mappa);
+
+      // Le miniature nel popup aprono la galleria. Il popup viene ricreato a ogni
+      // apertura, quindi gli ascolti si agganciano qui e non una volta sola.
+      var perCodice = {};
+      conCoordinate.forEach(function (imp) { perCodice[imp.code] = imp; });
+      mappa.on('popupopen', function (e) {
+        var radicePopup = e.popup.getElement();
+        if (!radicePopup) return;
+        [].slice.call(radicePopup.querySelectorAll('.pop-miniatura')).forEach(function (b) {
+          b.addEventListener('click', function () {
+            apriGalleria(perCodice[b.getAttribute('data-codice')],
+              Number(b.getAttribute('data-foto')), b);
+          });
+        });
+      });
       mappa.fitBounds(gruppo.getBounds().pad(0.15));
       if (nota) nota.textContent = conCoordinate.length + ' impianti sulla mappa';
     } else if (nota) {
@@ -253,6 +267,131 @@
         voce(autoportanti, 'con telaio proprio') +
         voce(illuminati, 'illuminati');
     }
+  }
+
+  /* ---------- popup della mappa ----------------------------------------------
+     Miniature cliccabili sopra i dati: una a tutta larghezza, due affiancate.
+     Sono <button>, cosi si raggiungono anche da tastiera. HTML semplice e non
+     componenti: dentro un popup Leaflet e la strada che funziona sempre. */
+  function contenutoPopup(imp) {
+    var foto = imp.photos || [];
+    var miniature = foto.length
+      ? foto.map(function (f, i) {
+          return '<button type="button" class="pop-miniatura" data-codice="' + testo(imp.code) +
+            '" data-foto="' + i + '" aria-label="Apri la foto ' + (i + 1) + ' di ' + foto.length +
+            ' dell\'impianto ' + testo(imp.code) + '">' +
+            // niente loading=lazy: il popup nasce solo quando lo si apre
+            '<img src="assets/foto/impianti/' + testo(f) + '" alt="" decoding="async">' +
+            '</button>';
+        }).join('')
+      : '<p class="pop-senza">Foto in arrivo</p>';
+    var dati = [imp.dim, imp.sqm ? (imp.sqm_stimato ? '~ ' : '') + imp.sqm + ' m&sup2;' : '',
+      imp.type].filter(Boolean).join(' &middot; ');
+    return '<div class="pop">' +
+      '<div class="pop-foto conta-' + Math.min(foto.length, 2) + '">' + miniature + '</div>' +
+      '<p class="pop-code">' + testo(imp.code) + '</p>' +
+      '<p class="pop-pos">' + testo(imp.pos) + '</p>' +
+      '<p class="pop-dati">' + dati + '</p>' +
+      '</div>';
+  }
+
+  /* ---------- galleria a tutto schermo ---------------------------------------
+     Una sola, creata alla prima apertura. Si sfoglia con le frecce (a schermo e
+     da tastiera) e col dito; si chiude con la x, con Esc o cliccando fuori dalla
+     foto. Mentre e aperta la pagina sotto non scorre e il fuoco resta dentro. */
+  var galleria = null;
+  var inGalleria = { imp: null, i: 0, daDove: null };
+
+  function costruisciGalleria() {
+    galleria = document.createElement('div');
+    galleria.className = 'galleria';
+    galleria.hidden = true;
+    galleria.setAttribute('role', 'dialog');
+    galleria.setAttribute('aria-modal', 'true');
+    galleria.setAttribute('aria-label', 'Foto dell\'impianto');
+    galleria.innerHTML =
+      '<button type="button" class="galleria-chiudi" aria-label="Chiudi">&times;</button>' +
+      '<button type="button" class="galleria-freccia prec" aria-label="Foto precedente">&lsaquo;</button>' +
+      '<figure><img alt=""><figcaption>' +
+        '<span class="g-code"></span><span class="g-pos"></span><span class="g-conta"></span>' +
+      '</figcaption></figure>' +
+      '<button type="button" class="galleria-freccia succ" aria-label="Foto successiva">&rsaquo;</button>';
+    document.body.appendChild(galleria);
+
+    galleria.querySelector('.galleria-chiudi').addEventListener('click', chiudiGalleria);
+    galleria.querySelector('.prec').addEventListener('click', function () { sfoglia(-1); });
+    galleria.querySelector('.succ').addEventListener('click', function () { sfoglia(1); });
+    // clic sul fondo, non sulla foto: chiude
+    galleria.addEventListener('click', function (e) { if (e.target === galleria) chiudiGalleria(); });
+
+    galleria.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { e.preventDefault(); chiudiGalleria(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); sfoglia(-1); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); sfoglia(1); }
+      else if (e.key === 'Tab') {
+        // il fuoco gira fra i pulsanti visibili della galleria e non esce
+        var tasti = [].slice.call(galleria.querySelectorAll('button')).filter(function (b) { return !b.hidden; });
+        var ora = tasti.indexOf(document.activeElement);
+        var dopo = e.shiftKey ? (ora <= 0 ? tasti.length - 1 : ora - 1) : (ora + 1) % tasti.length;
+        e.preventDefault();
+        tasti[dopo].focus();
+      }
+    });
+
+    // Scorrimento col dito: solo in orizzontale (touch-action: pan-y nel CSS),
+    // e pointercancel azzera, altrimenti un gesto interrotto sfoglierebbe dopo.
+    var figura = galleria.querySelector('figure');
+    var partenza = null;
+    figura.addEventListener('pointerdown', function (e) {
+      if (e.pointerType !== 'mouse') partenza = e.clientX;
+    });
+    figura.addEventListener('pointerup', function (e) {
+      if (partenza === null) return;
+      var dx = e.clientX - partenza;
+      partenza = null;
+      if (Math.abs(dx) > 40) sfoglia(dx < 0 ? 1 : -1);
+    });
+    figura.addEventListener('pointercancel', function () { partenza = null; });
+  }
+
+  function apriGalleria(imp, i, daDove) {
+    if (!imp || !imp.photos || !imp.photos.length) return;
+    if (!galleria) costruisciGalleria();
+    inGalleria = { imp: imp, i: i || 0, daDove: daDove || document.activeElement };
+    var piuFoto = imp.photos.length > 1;
+    galleria.querySelector('.prec').hidden = !piuFoto;
+    galleria.querySelector('.succ').hidden = !piuFoto;
+    mostraFoto();
+    galleria.hidden = false;
+    document.documentElement.classList.add('galleria-aperta');
+    galleria.querySelector('.galleria-chiudi').focus();
+  }
+
+  function sfoglia(passo) {
+    var imp = inGalleria.imp;
+    if (!imp || imp.photos.length < 2) return;
+    inGalleria.i = (inGalleria.i + passo + imp.photos.length) % imp.photos.length;
+    mostraFoto();
+  }
+
+  function mostraFoto() {
+    var imp = inGalleria.imp;
+    var img = galleria.querySelector('img');
+    img.src = 'assets/foto/impianti/' + imp.photos[inGalleria.i];
+    img.alt = 'Impianto ' + imp.code + ' in ' + imp.pos + ', Napoli';
+    galleria.querySelector('.g-code').textContent = imp.code;
+    galleria.querySelector('.g-pos').textContent = imp.pos;
+    galleria.querySelector('.g-conta').textContent =
+      imp.photos.length > 1 ? (inGalleria.i + 1) + ' / ' + imp.photos.length : '';
+  }
+
+  function chiudiGalleria() {
+    if (!galleria || galleria.hidden) return;
+    galleria.hidden = true;
+    document.documentElement.classList.remove('galleria-aperta');
+    // il fuoco torna dove era: la miniatura nel popup, se c'e ancora
+    var daDove = inGalleria.daDove;
+    if (daDove && document.contains(daDove) && daDove.focus) daDove.focus();
   }
 
   function autoportante(imp) {

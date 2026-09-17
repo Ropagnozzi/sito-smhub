@@ -152,6 +152,21 @@ corti (sotto 720 px di altezza) la riga sparisce e il blocco si compatta. Verifi
   (`hero-01.jpg`...; 5,9 MB diventati 1,4 MB) e le scrive in `js/impianti-data.js`.
 - **Tablet e computer** non le usano. Ruotando il telefono la sequenza si ricostruisce.
 
+## Mappa: popup e galleria
+
+Cliccando un segnaposto si apre un popup con le **miniature delle foto** dell'impianto (una a tutta
+larghezza, due affiancate; "Foto in arrivo" se non ce ne sono), poi codice, posizione e dati. Ogni
+miniatura e un pulsante che apre la **galleria a tutto schermo**:
+
+- si sfoglia con le frecce a schermo, con le frecce della tastiera e scorrendo col dito;
+- si chiude con la x, con Esc o cliccando sul fondo (non sulla foto);
+- mentre e aperta la pagina sotto non scorre, il fuoco resta dentro e alla chiusura torna sulla miniatura.
+
+Codice in `js/site.js` (`contenutoPopup`, `apriGalleria`), stile in `css/style.css` (`.pop-impianto`,
+`.galleria`). Due trappole: i testi del popup hanno il prefisso `.pop-impianto` perche Leaflet da ai `<p>`
+dei popup un margine piu specifico di una classe sola; e le miniature non hanno `loading="lazy"`, perche il
+popup nasce solo quando lo si apre.
+
 ## Gli impianti: da dove arrivano i dati
 
 SM HUB e Diesse Media sono **due soggetti autonomi**, ma i maxi impianti sono gli stessi. Per non
