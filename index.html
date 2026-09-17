@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Intro del marchio: si decide qui, prima che la pagina si disegni. Solo alla
+     prima apertura della sessione e mai se il sistema chiede meno movimento;
+     ?intro nell'indirizzo la forza. Il resto sta in js/intro.js. -->
+<script>(function(){try{var f=/[?&]intro\b/.test(location.search);if(f||(!sessionStorage.getItem('smhubIntro')&&!matchMedia('(prefers-reduced-motion: reduce)').matches))document.documentElement.classList.add('apre-marchio')}catch(e){}})();</script>
 <title>SMHUB | Affissioni e grandi formati a Napoli</title>
 <meta name="description" content="SMHUB pianifica e realizza affissioni su poster di medie e grandi dimensioni a Napoli, su palazzi e strutture stand alone, nelle posizioni di maggiore visibilità.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,7 +15,7 @@
      Inter Tight servono solo al confronto in barra: quando la scelta e fatta, restano le due usate. -->
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif&family=Inter+Tight:wght@400;500;600&family=Newsreader:opsz,wght@6..72,300..600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="css/style.css?v=25">
+<link rel="stylesheet" href="css/style.css?v=27">
 </head>
 <body>
 
@@ -169,6 +173,8 @@
   </div>
 </footer>
 
+<!-- prima di Leaflet e non defer: l'intro deve partire appena la pagina e costruita -->
+<script src="js/intro.js?v=3"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script src="js/impianti-data.js?v=6" defer></script>
 <script src="js/site.js?v=10" defer></script>

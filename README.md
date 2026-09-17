@@ -74,6 +74,35 @@ AGGIORNA_IMPIANTI.bat  doppio-click per rigenerare tutto
 assets/foto/impianti/  GENERATE: foto copiate dal sito Diesse Media
 ```
 
+## L'intro del marchio
+
+Alla prima apertura della sessione il logo compare grande al centro su fondo pieno, **si compone pezzo
+per pezzo** (S, M, la sbarra blu che scatta in diagonale, poi "hub") e **vola al suo posto nella barra**
+mentre il fondo si dissolve e scopre l'hero. Dura meno di 2 secondi e si salta con un clic, un tasto o
+uno scroll. Codice in `js/intro.js`.
+
+- **Quando parte**: solo la prima volta nella sessione (`sessionStorage`, chiave `smhubIntro`), mai se il
+  sistema chiede meno movimento, mai in una scheda aperta in secondo piano. Per rivederla: aggiungere
+  **`?intro`** all'indirizzo (oppure aprire una nuova scheda).
+- **Come atterra**: la posizione d'arrivo si misura sul logo vero della barra, quindi vale per qualunque
+  schermo (58px su desktop, 46px su telefono). Verificato: scarto 0 pixel.
+- **Perche il clone nasce grande e rimpicciolisce**: un SVG ingrandito con `transform` sgrana, uno
+  rimpicciolito resta nitido.
+- **Perche ogni pezzo sta in un `<g>`**: i path hanno gia un attributo `transform` (la matrice del PDF
+  d'origine) e un transform CSS messo su di loro lo cancellerebbe.
+- **Perche le classi si chiamano `apre-*`**: `.intro` esiste gia sui paragrafi (`max-width:56ch`) e su
+  `<html>` stringerebbe tutta la pagina.
+
+**Tre sicurezze, perche un'intro non deve mai bloccare il sito:**
+1. la decisione la prende uno script di una riga nel `<head>`, prima che la pagina si disegni;
+2. finche `intro.js` non parte la pagina e coperta da un velo CSS che **si toglie da solo dopo 2,5 s**:
+   se lo script non arriva, il sito compare comunque;
+3. da quando parte, un timer chiude tutto entro 3 s. La chiusura usa la promessa `animation.finished` e
+   non l'evento `onfinish`, che viaggia coi fotogrammi e puo arrivare in ritardo.
+
+`intro.js` e caricato in fondo al body **prima di Leaflet e senza `defer`**, cosi parte appena la pagina e
+costruita invece di aspettare il file piu lento.
+
 ## L'hero
 
 Fotografia a tutta pagina con le immagini degli impianti in dissolvenza, e il payoff dentro una

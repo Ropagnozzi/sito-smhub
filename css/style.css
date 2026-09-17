@@ -203,6 +203,25 @@ p{margin:0}
 .tema button[aria-pressed="true"],.carattere button[aria-pressed="true"]{background:var(--filo);color:var(--testo)}
 @media (max-width:768px){.tema,.carattere{display:none}}
 
+/* ---------- intro del marchio (js/intro.js) ----------
+   Le classi si chiamano apre-* e non intro-*: .intro esiste gia sui paragrafi
+   (max-width:56ch) e messa su <html> stringerebbe tutta la pagina.
+   Unica eccezione consapevole alla regola "niente contenuto nascosto": per un
+   istante la pagina e coperta. Il velo CSS copre solo l'attesa dello script e
+   si toglie da solo dopo 2,5 secondi, quindi se lo script non arriva il sito
+   compare comunque. Quando lo script parte, sostituisce il velo CSS col suo. */
+html.apre-marchio body::after{content:"";position:fixed;inset:0;z-index:98;
+  background-color:var(--fondo);background-image:var(--rilievo);
+  animation:apre-via .35s 2.5s forwards}
+.apre-velo{position:fixed;inset:0;z-index:98;pointer-events:none;
+  background-color:var(--fondo);background-image:var(--rilievo)}
+html.apre-marchio .nav-logo .marchio{visibility:hidden;animation:apre-logo 0s 2.6s forwards}
+html.apre-marchio-attiva .nav-logo .marchio{visibility:hidden}
+.apre-volo{position:fixed;z-index:99;margin:0;color:var(--testo);pointer-events:none;will-change:transform}
+.apre-volo g{transform-box:fill-box}
+@keyframes apre-via{to{opacity:0;visibility:hidden}}
+@keyframes apre-logo{to{visibility:visible}}
+
 /* ---------- hero: foto piena + squadratura tecnica ---------- */
 .hero{position:relative;min-height:100dvh;display:flex;flex-direction:column;justify-content:center;
   align-items:center;
