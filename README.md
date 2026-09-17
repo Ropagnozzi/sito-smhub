@@ -168,6 +168,10 @@ all'avvio.
 
 Le foto delle **schede** aprono la stessa galleria della mappa; con due foto compare l'etichetta "2 foto".
 
+Ogni **scheda** ha un **filetto blu** (`--accento`, #009ee4, il blu della sbarra del logo) e un filetto
+uguale fra foto e testo; le schede sono distanziate. Niente linee di griglia condivise: con il filtro
+attivo le caselle vuote dell'ultima riga sarebbero diventate blocchi blu pieni.
+
 Cliccando un segnaposto si apre un popup con le **miniature delle foto** dell'impianto (una a tutta
 larghezza, due affiancate; "Foto in arrivo" se non ce ne sono), poi codice, posizione e dati. Ogni
 miniatura e un pulsante che apre la **galleria a tutto schermo**:

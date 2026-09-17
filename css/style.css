@@ -370,10 +370,16 @@ html.galleria-aperta{overflow:hidden}
 .filtro button[aria-pressed="true"]{background:var(--accento);color:var(--su-accento)}
 .filtro button[aria-pressed="true"] span{color:var(--su-accento);opacity:.7}
 
-.elenco{margin-top:clamp(20px,3vh,30px);display:grid;gap:1px;background:var(--filo);
-  border:1px solid var(--filo);grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}
-.imp{background:var(--fondo);display:flex;flex-direction:column}
-.imp-foto{position:relative;aspect-ratio:16/9;background:var(--fondo-2);overflow:hidden}
+/* Ogni scheda ha il suo filetto blu (il blu della sbarra del logo), con un po'
+   d'aria fra una e l'altra. Non linee di griglia condivise: con il filtro attivo
+   le caselle vuote dell'ultima riga sarebbero diventate blocchi blu pieni. */
+.elenco{margin-top:clamp(20px,3vh,30px);display:grid;gap:clamp(12px,1.3vw,20px);
+  grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}
+.imp{background:var(--fondo);display:flex;flex-direction:column;border:1px solid var(--accento);
+  transition:box-shadow .25s ease}
+@media (hover:hover){.imp:hover{box-shadow:0 0 0 1px var(--accento),0 10px 28px rgba(0,0,0,.28)}}
+.imp-foto{position:relative;aspect-ratio:16/9;background:var(--fondo-2);overflow:hidden;
+  border-bottom:1px solid var(--accento)}
 .imp-foto img{width:100%;height:100%;object-fit:cover}
 /* la foto della scheda apre la galleria */
 .imp-apri{display:block;width:100%;height:100%;padding:0;border:0;margin:0;background:none;cursor:zoom-in;
