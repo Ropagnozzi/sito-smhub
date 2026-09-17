@@ -1,7 +1,7 @@
 /* SM HUB - intro del marchio.
    Alla prima apertura della sessione il logo compare grande al centro, si
    compone pezzo per pezzo (S, M, sbarra blu, hub) e vola al suo posto nella
-   barra mentre il fondo si dissolve. Meno di due secondi, e si salta con un
+   barra mentre il fondo si dissolve. Circa tre secondi, e si salta con un
    clic, un tasto o uno scroll.
 
    Un'intro non deve mai poter bloccare il sito, quindi tre sicurezze:
@@ -9,7 +9,8 @@
      sessione non l'ha ancora vista e il sistema non chiede meno movimento;
    - finche questo file non parte la pagina e coperta da un velo CSS che si
      toglie da solo dopo 2,5 secondi: se lo script non arriva, il sito compare;
-   - da quando parte, un timer chiude comunque tutto entro 3 secondi.
+   - da quando parte, un timer chiude comunque tutto (SICUREZZA, poco piu
+     della durata dell'intro).
 
    Per rivederla senza aprire una nuova scheda: aggiungere ?intro all'indirizzo.
 
@@ -21,6 +22,15 @@
   var radice = document.documentElement;
   if (!radice.classList.contains('apre-marchio')) return;
 
+  /* Tempi e movimento, tutti qui. Per rallentare o accelerare basta toccare
+     questi numeri (millisecondi); SICUREZZA deve restare oltre la fine. */
+  var PEZZO = 760;          // quanto impiega ogni pezzo del marchio a comparire
+  var PAUSA_FINO_A = 1950;  // il logo completo resta fermo al centro fino a qui
+  var VOLO = 1250;          // durata del volo verso la barra
+  var INCLINA = -9;         // gradi di inclinazione a meta volo (0 = niente)
+  var ASSESTA = 2.5;        // piccolo ritorno oltre lo zero prima di posarsi
+  var SICUREZZA = PAUSA_FINO_A + VOLO + 1200;
+
   var logo = document.querySelector('.nav-logo .marchio');
 
   // Da qui decide questo script: via il velo CSS con la sua scadenza, dentro il
@@ -31,7 +41,7 @@
 
   var SALTI = ['wheel', 'touchstart', 'keydown', 'pointerdown'];
   var velo = null, volo = null, finito = false;
-  var sicurezza = setTimeout(chiudi, 3000);
+  var sicurezza = setTimeout(chiudi, SICUREZZA);
 
   if (!logo || !logo.animate || document.hidden) { chiudi(); return; }
 
@@ -70,9 +80,16 @@
   volo.style.width = lato + 'px';
   volo.style.height = lato + 'px';
 
-  var piccolo = 'translate(' +
-    (arrivo.left + arrivo.width / 2 - cx) + 'px,' +
-    (arrivo.top + arrivo.height / 2 - cy) + 'px) scale(' + (arrivo.width / lato) + ')';
+  var dx = arrivo.left + arrivo.width / 2 - cx;
+  var dy = arrivo.top + arrivo.height / 2 - cy;
+  var sc = arrivo.width / lato;
+  // Stessa lista di funzioni in ogni fotogramma (translate, rotate, scale), cosi
+  // il browser interpola ogni voce per conto suo. La rotazione sta DOPO il
+  // translate: il logo gira su se stesso, non attorno al centro dello schermo.
+  function posa(quota, gradi) {
+    return 'translate(' + dx * quota + 'px,' + dy * quota + 'px) rotate(' + gradi +
+      'deg) scale(' + (1 + (sc - 1) * quota) + ')';
+  }
 
   document.body.appendChild(velo);
   document.body.appendChild(volo);
@@ -83,25 +100,29 @@
   var salePoco = [{ opacity: 0, transform: 'translateY(5px)' }, { opacity: 1, transform: 'none' }];
   var scatta = [{ transform: 'scale(0)' }, { transform: 'scale(1)' }];
   var tempi = [
-    [0, sale, 0], [1, sale, 90],          // S e M
-    [2, scatta, 270],                     // la sbarra blu cresce dal suo vertice basso
-    [3, salePoco, 400], [4, salePoco, 450], [5, salePoco, 500]  // hub
+    [0, sale, 0], [1, sale, 150],         // S e M
+    [2, scatta, 420],                     // la sbarra blu cresce dal suo vertice basso
+    [3, salePoco, 620], [4, salePoco, 700], [5, salePoco, 780]  // hub
   ];
   if (pezzi[2]) pezzi[2].style.transformOrigin = '0% 100%';
   tempi.forEach(function (t) {
     if (pezzi[t[0]]) {
-      pezzi[t[0]].animate(t[1], { duration: 520, delay: t[2], easing: morbido, fill: 'both' });
+      pezzi[t[0]].animate(t[1], { duration: PEZZO, delay: t[2], easing: morbido, fill: 'both' });
     }
   });
 
   // ---- 2. vola al suo posto, il fondo si scopre ----
-  var PARTENZA = 1150;
-  var viaggio = volo.animate(
-    [{ transform: 'none' }, { transform: piccolo }],
-    { duration: 780, delay: PARTENZA, easing: 'cubic-bezier(.75,0,.2,1)', fill: 'forwards' });
+  // Inclinazione: parte dritto, si piega a meta strada, torna appena oltre lo
+  // zero e si posa dritto. L'ultimo fotogramma e esattamente il logo in barra.
+  var viaggio = volo.animate([
+    { transform: posa(0, 0), offset: 0 },
+    { transform: posa(0.45, INCLINA), offset: 0.45 },
+    { transform: posa(0.82, ASSESTA), offset: 0.82 },
+    { transform: posa(1, 0), offset: 1 }
+  ], { duration: VOLO, delay: PAUSA_FINO_A, easing: 'cubic-bezier(.65,0,.25,1)', fill: 'forwards' });
   velo.animate(
     [{ opacity: 1 }, { opacity: 0 }],
-    { duration: 620, delay: PARTENZA + 160, easing: 'linear', fill: 'forwards' });
+    { duration: VOLO * 0.8, delay: PAUSA_FINO_A + VOLO * 0.2, easing: 'linear', fill: 'forwards' });
   // .finished (una promessa) e non onfinish (un evento): l'evento viene
   // consegnato col fotogramma successivo, la promessa no. Rigettata se
   // l'animazione viene annullata: in quel caso chiude qualcun altro.

@@ -78,8 +78,12 @@ assets/foto/impianti/  GENERATE: foto copiate dal sito Diesse Media
 
 Alla prima apertura della sessione il logo compare grande al centro su fondo pieno, **si compone pezzo
 per pezzo** (S, M, la sbarra blu che scatta in diagonale, poi "hub") e **vola al suo posto nella barra**
-mentre il fondo si dissolve e scopre l'hero. Dura meno di 2 secondi e si salta con un clic, un tasto o
-uno scroll. Codice in `js/intro.js`.
+mentre il fondo si dissolve e scopre l'hero; durante il volo si inclina appena e torna dritto prima di
+posarsi. Dura circa 3,2 secondi e si salta con un clic, un tasto o uno scroll. Codice in `js/intro.js`.
+
+**Tempi e inclinazione si regolano in cima a `js/intro.js`**: `PEZZO` (comparsa di ogni pezzo),
+`PAUSA_FINO_A` (quanto resta fermo al centro), `VOLO` (durata del volo), `INCLINA` (gradi a meta volo,
+0 per toglierla) e `ASSESTA` (il piccolo ritorno oltre lo zero). Il timer di sicurezza si ricalcola da solo.
 
 - **Quando parte**: solo la prima volta nella sessione (`sessionStorage`, chiave `smhubIntro`), mai se il
   sistema chiede meno movimento, mai in una scheda aperta in secondo piano. Per rivederla: aggiungere
@@ -97,7 +101,7 @@ uno scroll. Codice in `js/intro.js`.
 1. la decisione la prende uno script di una riga nel `<head>`, prima che la pagina si disegni;
 2. finche `intro.js` non parte la pagina e coperta da un velo CSS che **si toglie da solo dopo 2,5 s**:
    se lo script non arriva, il sito compare comunque;
-3. da quando parte, un timer chiude tutto entro 3 s. La chiusura usa la promessa `animation.finished` e
+3. da quando parte, un timer chiude tutto poco dopo la fine prevista. La chiusura usa la promessa `animation.finished` e
    non l'evento `onfinish`, che viaggia coi fotogrammi e puo arrivare in ritardo.
 
 `intro.js` e caricato in fondo al body **prima di Leaflet e senza `defer`**, cosi parte appena la pagina e
