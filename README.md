@@ -33,33 +33,27 @@ observer, quindi niente rischio di sezioni invisibili su schede in secondo piano
   Dove le scroll-driven animation non ci sono (Safari, Firefox) i fasci scorrono da soli in loop;
   con `prefers-reduced-motion` restano fermi.
 - Nessun raggio di curvatura: tutto spigolo vivo.
-- Tipografia: Archivo (titoli) e IBM Plex Mono (dati e etichette).
+- Tipografia: IBM Plex Mono (payoff, titoli, etichette, dati) e Archivo (testo corrente).
 
-### Interruttori provvisori
+### Interruttore provvisorio
 
 Nella barra in alto c'e un gruppo `.tema` con i tre pulsanti Scuro, Medio e Chiaro: serve solo a scegliere,
 la preferenza resta in `localStorage` come `smhubTema`. **Quando il fondo e deciso**: togliere il
 `<div class="tema">` da `index.html`, togliere il blocco dell'interruttore da `js/site.js` e lasciare
 nel CSS la sola palette scelta, spostandone i valori dentro `:root`.
 
-Accanto c'e un secondo gruppo, `.carattere`, con quattro pulsanti per il **carattere dei titoli**:
+### Caratteri (deciso il 2026-09-17)
 
-| Pulsante | Carattere | Come si comporta |
-|---|---|---|
-| Ora | Archivo 600 | quello di partenza: grotesca stretta, peso alto, titoli fino a 138px |
-| Serif | Newsreader 400 | grazie editoriali, la piu calda e discorsiva |
-| Alta | Instrument Serif 400 | grazie sottili, lettere strette e alte, la piu scultorea |
-| Sans | Inter Tight 500 | resta senza grazie ma molto meno gridata (cambia anche il testo corrente) |
+Due soli font, caricati da Google Fonts:
 
-Ogni variante non cambia solo la famiglia: porta con se **peso, crenatura, interlinea e scala** del
-titolo, perche un lettering signorile si ottiene anche alleggerendo peso e corpo. Le leve sono quattro
-variabili in `:root` (`--titolo-peso`, `--titolo-tracking`, `--titolo-interlinea`, `--titolo-scala`)
-usate da `h1, h2, h3`; la scala moltiplica i `clamp()` esistenti, quindi i rapporti fra i corpi restano.
-La preferenza resta in `localStorage` come `smhubCarattere`.
+- **IBM Plex Mono**, peso 500, **maiuscolo e spaziato**: payoff dell'hero, tutti i titoli (`h1`, `h2`, `h3`),
+  etichette, pulsanti e dati. I titoli usano lo stesso font del payoff, con corpi contenuti: `h2` da 19 a
+  32 px, titoli dei servizi da 14 a 18 px. Il peso visivo lo da la spaziatura (`.14em`), non la grandezza.
+- **Archivo** per il testo corrente e per gli **indirizzi delle schede** (`.imp h3`), che sono dati da
+  leggere: 47 indirizzi in maiuscolo monospaziato sarebbero stati un muro.
 
-**Quando il carattere e deciso**: togliere il `<div class="carattere">` da `index.html`, togliere il
-blocco dell'interruttore da `js/site.js`, portare i valori della variante scelta dentro `:root` ed
-eliminare dal `<link>` dei Google Fonts le famiglie non usate (restano due: titoli e monospaziato).
+L'interruttore provvisorio ORA / SERIF / ALTA / SANS e stato tolto insieme ai tre font di prova
+(Newsreader, Instrument Serif, Inter Tight) che la pagina scaricava inutilmente.
 
 ## File
 
@@ -251,7 +245,6 @@ autonomo di SM HUB, visto che il dato e lo stesso ma il modo di presentarlo no. 
 
 ## Da completare
 
-- Scelta del carattere dei titoli fra le quattro varianti in barra (poi togliere l'interruttore).
 - Testi commerciali di SM HUB: oggi le schede portano i dati tecnici, manca il racconto (perche quella
   posizione vale, cosa ci si vede intorno).
 - Verifica delle posizioni riscritte automaticamente: qualche abbreviazione puo essere uscita male.

@@ -94,31 +94,9 @@
     });
   }
 
-  /* ---------- interruttore di confronto fra i caratteri dei titoli ----------
-     Come quello dei fondi: serve solo a scegliere. Quando il carattere e deciso,
-     si toglie il gruppo .carattere dal markup e si portano i valori della variante
-     scelta dentro :root nel CSS. "archivo" = nessun attributo, il punto di partenza. */
-  var bottoniCarattere = [].slice.call(document.querySelectorAll('.carattere button'));
-  if (bottoniCarattere.length) {
-    var salvatoC = null;
-    try { salvatoC = localStorage.getItem('smhubCarattere'); } catch (e) {}
-    var validiC = ['archivo', 'serif', 'alta', 'sans'];
-    applicaCarattere(validiC.indexOf(salvatoC) > -1 ? salvatoC : 'archivo');
-    bottoniCarattere.forEach(function (b) {
-      b.addEventListener('click', function () {
-        var c = b.getAttribute('data-carattere');
-        applicaCarattere(c);
-        try { localStorage.setItem('smhubCarattere', c); } catch (e) {}
-      });
-    });
-  }
-  function applicaCarattere(car) {
-    if (car === 'archivo') document.documentElement.removeAttribute('data-carattere');
-    else document.documentElement.setAttribute('data-carattere', car);
-    bottoniCarattere.forEach(function (b) {
-      b.setAttribute('aria-pressed', b.getAttribute('data-carattere') === car ? 'true' : 'false');
-    });
-  }
+  // Il font dei titoli e deciso (IBM Plex Mono, come il payoff): via
+  // l'eventuale preferenza rimasta dall'interruttore provvisorio.
+  try { localStorage.removeItem('smhubCarattere'); } catch (e) {}
 
   /* ---------- menu mobile --------------------------------------------------- */
   var tasto = document.querySelector('.nav-toggle');
