@@ -149,6 +149,11 @@ corti (sotto 720 px di altezza) la riga sparisce e il blocco si compatta. Verifi
 - **Cosa si pubblica**: `AGGIORNA_IMPIANTI.bat` ne fa copie compresse in `assets/foto/hero-mobile/`
   (`hero-01.jpg`...; 5,9 MB diventati 1,4 MB) e le scrive in `js/impianti-data.js`.
 - **Tablet e computer** non le usano. Ruotando il telefono la sequenza si ricostruisce.
+- **Fascia su telefono**: sfondo nel blu del marchio che sfuma ai lati (al centro #0080ba, perche sul blu
+  chiaro il bianco si legge male) con due filetti chiari sfumati; fra fascia, frase e pulsanti c'e piu
+  aria (34 e 28 px). Sui telefoni medio-bassi (721-780 px) gli spazi si stringono un poco, sotto i 720 px
+  la frase sparisce. Misurato: la fascia parte fra il 58% e il 67% della foto su 375x667, 360x740,
+  393x780, 375x800, 375x812 e 390x844, sempre sotto il fondo del cartellone piu basso (Lete, 58%).
 
 ## Mappa: zoom, popup e galleria
 

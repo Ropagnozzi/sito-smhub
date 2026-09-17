@@ -454,10 +454,27 @@ footer{border-top:1px solid var(--filo);background:var(--fondo)}
   .hero-verticale .hero-velo{display:block;
     background:linear-gradient(180deg,rgba(22,27,34,.30) 0%,rgba(22,27,34,0) 16%,
       rgba(22,27,34,0) 46%,rgba(22,27,34,.55) 62%,rgba(22,27,34,.86) 100%)}
-  .hero-verticale .hero-fascia{border-top:1px solid rgba(255,255,255,.18)}
-  .hero-verticale .hero-sotto{margin-top:20px;gap:16px}
+  /* Fascia in blu del marchio che sfuma verso i bordi. Al centro, dietro il
+     testo, il blu scuro (#0080ba): sul blu chiaro il bianco si legge male.
+     Due filetti chiari, sfumati anche loro, sopra e sotto. */
+  .hero-verticale .hero-fascia{border:0;backdrop-filter:none;
+    background:
+      linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.55) 50%,rgba(255,255,255,0)) top/100% 1px no-repeat,
+      linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.55) 50%,rgba(255,255,255,0)) bottom/100% 1px no-repeat,
+      linear-gradient(90deg,rgba(0,158,228,0) 0%,rgba(0,158,228,.78) 16%,rgba(0,128,186,.94) 38%,
+        rgba(0,128,186,.94) 62%,rgba(0,158,228,.78) 84%,rgba(0,158,228,0) 100%)}
+  .hero-verticale .hero h1,.hero-verticale h1{text-shadow:0 1px 2px rgba(0,40,70,.45)}
+  /* piu aria fra fascia, frase e pulsanti */
+  .hero-verticale .hero-sotto{margin-top:34px;gap:28px}
+  .hero-verticale .hero-azioni{gap:14px}
   .hero-verticale .hero-riga{text-shadow:0 1px 3px rgba(0,0,0,.92),0 2px 26px rgba(0,0,0,.7)}
   .hero-verticale .quota{display:none}
+}
+
+/* Telefoni medio-bassi (molti Android, 360x740): la frase resta, ma gli spazi
+   si stringono appena, altrimenti la fascia tocca il fondo dei cartelloni piu alti. */
+@media (orientation:portrait) and (max-width:768px) and (min-height:721px) and (max-height:780px){
+  .hero-verticale .hero-sotto{margin-top:26px;gap:20px}
 }
 
 /* Telefoni corti (iPhone SE e simili): il blocco di testo si compatta, se no la
@@ -465,7 +482,7 @@ footer{border-top:1px solid var(--filo);background:var(--fondo)}
 @media (orientation:portrait) and (max-width:768px) and (max-height:720px){
   .hero-verticale .hero-riga{display:none}
   .hero-verticale .hero-fascia{padding:16px 18px}
-  .hero-verticale .hero-sotto{margin-top:16px;gap:12px}
+  .hero-verticale .hero-sotto{margin-top:24px;gap:12px}
 }
 @media (prefers-reduced-motion:reduce){
   .slide{transition:none}
