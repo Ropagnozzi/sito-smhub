@@ -114,6 +114,24 @@
     });
   }
 
+  /* ---------- in evidenza: la domination di Corso Vittorio Emanuele ---------
+     Due impianti su ponteggio che non fanno parte del catalogo dei 47: i dati
+     stanno qui perche arrivano dalla presentazione, non dall'xlsx. */
+  var DOMINATION = {
+    a: { code: 'A - Corso Vittorio Emanuele', pos: 'Corso Vittorio Emanuele, 10 x 13 m, illuminato',
+         lat: 40.8336892, lng: 14.2209031, cartella: 'assets/foto/domination/',
+         photos: ['dom-a-01.jpg', 'dom-a-02.jpg', 'dom-a-03.jpg'] },
+    b: { code: 'B - Angolo Via Arangio Ruiz', pos: 'Corso Vittorio Emanuele angolo Via Arangio Ruiz, 9 x 13 m, illuminato',
+         lat: 40.8331332, lng: 14.2206949, cartella: 'assets/foto/domination/',
+         photos: ['dom-b-01.jpg', 'dom-b-02.jpg', 'dom-b-03.jpg'] }
+  };
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.dom-apri') : null;
+    if (!b) return;
+    apriGalleria(DOMINATION[b.getAttribute('data-posizione')],
+      Number(b.getAttribute('data-foto')) || 0, b);
+  });
+
   /* ---------- mappa di copertura -------------------------------------------
      Mappa reale, senza segnaposti finti: i marker compaiono quando arriva
      l'elenco impianti con le coordinate. */
@@ -206,6 +224,17 @@
           });
         });
       });
+      // i due impianti in evidenza: cerchio piu grande e anello bianco
+      Object.keys(DOMINATION).forEach(function (k) {
+        var d = DOMINATION[k];
+        L.circleMarker([d.lat, d.lng], {
+          radius: 10, color: '#fff', weight: 2, fillColor: '#009ee4', fillOpacity: 0.95
+        }).bindPopup('<div class="pop"><p class="pop-code">In evidenza</p>' +
+          '<p class="pop-pos">' + testo(d.code) + '</p>' +
+          '<p class="pop-dati">' + testo(d.pos) + '</p></div>',
+          { className: 'pop-impianto', minWidth: 250, maxWidth: 250 }).addTo(gruppo);
+      });
+
       var tuttiGliImpianti = gruppo.getBounds().pad(0.15);
       mappa.fitBounds(tuttiGliImpianti);
 
@@ -435,7 +464,9 @@
   function mostraFoto() {
     var imp = inGalleria.imp;
     var img = galleria.querySelector('img');
-    img.src = 'assets/foto/impianti/' + imp.photos[inGalleria.i];
+    // gli impianti a catalogo stanno in assets/foto/impianti/, quelli in evidenza
+    // in una cartella loro: chi ce l'ha se la porta dietro
+    img.src = (imp.cartella || 'assets/foto/impianti/') + imp.photos[inGalleria.i];
     img.alt = 'Impianto ' + imp.code + ' in ' + imp.pos + ', Napoli';
     galleria.querySelector('.g-code').textContent = imp.code;
     galleria.querySelector('.g-pos').textContent = imp.pos;

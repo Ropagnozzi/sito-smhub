@@ -14,7 +14,7 @@
 <!-- Due font: IBM Plex Mono (payoff, titoli, etichette) e Archivo (testo corrente). -->
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="css/style.css?v=43">
+<link rel="stylesheet" href="css/style.css?v=44">
 </head>
 <body>
 
@@ -39,6 +39,7 @@
 </g></svg></a>
   <button class="nav-toggle" aria-expanded="false" aria-controls="menu">Menu</button>
   <nav class="nav-link" id="menu">
+    <a href="#evidenza">In evidenza</a>
     <a href="#impianti">Impianti</a>
     <a href="#copertura">Copertura</a>
     <a href="#contatti">Contatti</a>
@@ -79,6 +80,69 @@
       </div>
     </div>
     <p class="quota sinistra" aria-hidden="true">Napoli 40.851 N / 14.268 E</p>
+  </section>
+
+
+  <!-- IN EVIDENZA: la domination di Corso Vittorio Emanuele, due impianti su ponteggio.
+       Le foto sono simulazioni grafiche, e la sezione lo dichiara. -->
+  <section class="evidenza" id="evidenza">
+    <div class="wrap">
+      <p class="etichetta">In evidenza</p>
+      <h2>Domination Corso Vittorio Emanuele</h2>
+      <p class="intro">Due maxi impianti su ponteggio, uno di fronte all&#39;altro sul nodo fra Corso
+      Vittorio Emanuele e Via Arangio Ruiz. Presi insieme presidiano la salita e la discesa: la campagna
+      non dipende da un solo senso di marcia.</p>
+
+      <ul class="conta evidenza-conta">
+        <li><span class="conta-n">247</span><span class="conta-e">metri quadri complessivi</span></li>
+        <li><span class="conta-n">2</span><span class="conta-e">direttrici presidiate</span></li>
+        <li><span class="conta-n">13</span><span class="conta-e">metri di altezza</span></li>
+      </ul>
+
+      <div class="evidenza-foto">
+        <button type="button" class="dom-apri grande" data-posizione="a" data-foto="0"
+          aria-label="Apri le foto della posizione A, Corso Vittorio Emanuele">
+          <img src="assets/foto/domination/dom-a-01.jpg" loading="lazy" decoding="async"
+            alt="Simulazione del maxi impianto A su Corso Vittorio Emanuele, Napoli">
+          <span class="dom-tag">A &middot; Corso Vittorio Emanuele</span>
+        </button>
+        <button type="button" class="dom-apri grande" data-posizione="b" data-foto="0"
+          aria-label="Apri le foto della posizione B, angolo Via Arangio Ruiz">
+          <img src="assets/foto/domination/dom-b-01.jpg" loading="lazy" decoding="async"
+            alt="Simulazione del maxi impianto B all&#39;angolo con Via Arangio Ruiz, Napoli">
+          <span class="dom-tag">B &middot; Angolo Via Arangio Ruiz</span>
+        </button>
+      </div>
+      <p class="evidenza-nota">Le immagini sono simulazioni grafiche: mostrano l&#39;ingombro reale
+      dell&#39;impianto con una creativit&agrave; di esempio. Tocca una foto per vederle tutte.</p>
+
+      <div class="evidenza-schede">
+        <article>
+          <p class="imp-code">Posizione A</p>
+          <h3>Corso Vittorio Emanuele</h3>
+          <p class="evidenza-dir">Intercetta il flusso in discesa verso Mergellina e Piedigrotta.</p>
+          <dl class="imp-dati">
+            <div><dt>Formato</dt><dd>10 x 13</dd></div>
+            <div><dt>Superficie</dt><dd>130 m&sup2;</dd></div>
+            <div><dt>Illuminazione</dt><dd>s&igrave;</dd></div>
+            <div><dt>Tipologia</dt><dd>Ponteggio</dd></div>
+          </dl>
+        </article>
+        <article>
+          <p class="imp-code">Posizione B</p>
+          <h3>Angolo Via Arangio Ruiz</h3>
+          <p class="evidenza-dir">Presidia la direttrice opposta, in risalita verso la parte alta della citt&agrave;.</p>
+          <dl class="imp-dati">
+            <div><dt>Formato</dt><dd>9 x 13</dd></div>
+            <div><dt>Superficie</dt><dd>117 m&sup2;</dd></div>
+            <div><dt>Illuminazione</dt><dd>s&igrave;</dd></div>
+            <div><dt>Tipologia</dt><dd>Ponteggio</dd></div>
+          </dl>
+        </article>
+      </div>
+
+      <a class="btn evidenza-btn" href="#contatti">Chiedi disponibilit&agrave; e listino</a>
+    </div>
   </section>
 
   <!-- OFFERTA: righe piene con numerazione a filo di contorno -->
@@ -171,6 +235,6 @@
 <script src="js/intro.js?v=4"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script src="js/impianti-data.js?v=8" defer></script>
-<script src="js/site.js?v=17" defer></script>
+<script src="js/site.js?v=18" defer></script>
 </body>
 </html>

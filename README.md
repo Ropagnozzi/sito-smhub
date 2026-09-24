@@ -261,6 +261,22 @@ autonomo di SM HUB, visto che il dato e lo stesso ma il modo di presentarlo no. 
 - Pagine interne (impianti, contatti) e pagine legali (privacy, cookie) quando si decide la struttura.
 - Dominio e pubblicazione.
 
+## In evidenza: la domination di Corso Vittorio Emanuele
+
+Sezione subito dopo l'hero (`#evidenza`), con link in barra: due maxi impianti su ponteggio, A su Corso
+Vittorio Emanuele (10x13, 130 mq) e B all'angolo con Via Arangio Ruiz (9x13, 117 mq), entrambi
+illuminati. Dati e foto vengono dalla presentazione `SMHUB Domination ... .pdf`, tenuta fuori dal repo;
+le sei foto compresse stanno in `assets/foto/domination/` (1,6 MB in tutto).
+
+- **Non sono nel catalogo dei 47** e non arrivano dall'xlsx: i dati stanno in `js/site.js` (costante
+  `DOMINATION`), che alimenta la galleria e i due segnaposti piu grandi sulla mappa.
+- La galleria ora accetta una `cartella` per le foto: gli impianti a catalogo restano in
+  `assets/foto/impianti/`, questi due in `assets/foto/domination/`.
+- **Le foto sono simulazioni grafiche** con creativita di marchi terzi (Barilla, KIKO, Nike, L'Oreal,
+  BMW): la sezione lo dichiara sotto le immagini. Da valutare se sostituirle con scatti puliti.
+- **Non pubblicati**: il listino della presentazione (210.000 euro per 15 giorni, A+B) e i recapiti
+  Diesse Media che compaiono in ultima pagina.
+
 ## Pagine legali
 
 `privacy.html` e `cookie.html`, stessa struttura del sito Diesse Media, generate riusando barra e piede
