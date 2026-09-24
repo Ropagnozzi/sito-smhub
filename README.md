@@ -284,9 +284,12 @@ cornice blu, tre coni di luce come i fari dei maxi e la luce radente del sito ch
 5 secondi. Testo orizzontale su tre livelli (occhiello, titolo, dati) e freccia. Prima era una linguetta
 verticale sul bordo destro: illeggibile su desktop.
 
+- Sta **sopra la fascia del payoff**, a 20 px: la quota non e una percentuale fissa ma viene misurata
+  dalla posizione reale della fascia, che cambia con l'altezza dello schermo (66% su desktop, meno sui
+  portatili bassi). Con una percentuale fissa a 1366x640 e su telefono la toccava.
 - Porta a `#evidenza`; si ritrae quando la sezione e a schermo.
 - Si chiude con la **x** e la scelta vale per la sessione (`sessionStorage`, chiave `smhubRichiamo`).
-- Su telefono diventa una striscia a tutta larghezza e compare solo dopo l'hero, per non coprire i pulsanti.
+- Su telefono diventa una striscia a tutta larghezza, sempre sopra la fascia: i pulsanti stanno sotto, quindi non li copre.
 - Niente IntersectionObserver: un controllo sulla posizione allo scroll fa lo stesso lavoro ed e
   verificabile anche dove il browser non emette fotogrammi. Parte sempre visibile: e il JS che lo nasconde.
 - Con il quarto link in barra lo spazio non bastava piu sotto i 1180 px: li sparisce l'interruttore

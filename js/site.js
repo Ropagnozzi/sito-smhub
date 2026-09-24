@@ -133,17 +133,30 @@
         try { sessionStorage.setItem('smhubRichiamo', 'chiuso'); } catch (e) {}
       });
     }
-    // Sul telefono il riquadro coprirebbe i pulsanti dell'hero: li compare solo
-    // dopo che l'apertura e passata.
-    var stretto = window.matchMedia('(max-width: 700px)');
+    // Ora il riquadro sta sopra la fascia del payoff, quindi non copre piu i
+    // pulsanti dell'hero: si nasconde solo quando la sezione e a schermo.
+    /* Il riquadro sta sopra la fascia del payoff. La fascia pero cambia quota
+       con l'altezza dello schermo (66% su desktop, meno sui portatili bassi),
+       quindi la posizione si misura invece di indovinarla con una percentuale. */
+    var fascia = document.querySelector('.hero-fascia');
+    var posizionaRichiamo = function () {
+      if (!fascia) return;
+      var quotaFascia = fascia.getBoundingClientRect().top + window.scrollY;
+      var alto = richiamo.getBoundingClientRect().height;
+      var daSotto = window.innerHeight - quotaFascia + 20;
+      // non deve salire sotto la barra: al massimo fin qui
+      var massimo = window.innerHeight - alto - 96;
+      richiamo.style.bottom = Math.max(14, Math.min(daSotto, massimo)) + 'px';
+    };
+    posizionaRichiamo();
+    window.addEventListener('resize', posizionaRichiamo);
+    if (window.ResizeObserver) new ResizeObserver(posizionaRichiamo).observe(richiamo);
+
     var guardaSezione = function () {
       if (chiuso) { richiamo.classList.add('via'); return; }
       var r = sezioneEvidenza.getBoundingClientRect();
       var visibile = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0);
-      var sullaSezione = visibile > Math.min(r.height, window.innerHeight) * 0.34;
-      var suHero = stretto.matches && hero &&
-        hero.getBoundingClientRect().bottom > window.innerHeight * 0.55;
-      richiamo.classList.toggle('via', sullaSezione || suHero);
+      richiamo.classList.toggle('via', visibile > Math.min(r.height, window.innerHeight) * 0.34);
     };
     guardaSezione();
     window.addEventListener('scroll', guardaSezione, { passive: true });

@@ -415,7 +415,10 @@ html.galleria-aperta{overflow:hidden}
    e si chiude con la x (la scelta vale per la sessione).
    La classe .via, messa da js/site.js, lo fa uscire di scena: non parte mai
    nascosto, e chi non ha JS lo vede e basta. */
-.richiamo{position:fixed;right:clamp(14px,2vw,26px);bottom:clamp(14px,2.4vh,26px);z-index:45;
+.richiamo{position:fixed;right:clamp(14px,2vw,26px);
+  /* sopra la fascia del payoff, che comincia al 66% dell'altezza: l'altezza e
+     espressa in dvh, cosi il riquadro resta sopra la banda su ogni schermo */
+  bottom:calc(34dvh + 20px);z-index:45;
   width:min(404px,calc(100vw - 28px));
   background:rgba(22,27,34,.94);border:1px solid var(--accento);
   box-shadow:0 18px 44px rgba(0,0,0,.5);
@@ -457,7 +460,7 @@ html.galleria-aperta{overflow:hidden}
 .richiamo-chiudi:focus-visible{outline:2px solid #fff;outline-offset:1px}
 @media (prefers-reduced-motion:reduce){.richiamo-telo::after{animation:none;opacity:0}}
 @media (max-width:520px){
-  .richiamo{right:10px;left:10px;bottom:10px;width:auto}
+  .richiamo{right:10px;left:10px;bottom:calc(34dvh + 14px);width:auto}
   .richiamo-telo{gap:11px;padding:10px}
   .richiamo-telo img{width:92px;height:52px}
   .richiamo-dati{display:none}
