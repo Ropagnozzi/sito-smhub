@@ -277,6 +277,15 @@ le sei foto compresse stanno in `assets/foto/domination/` (1,6 MB in tutto).
 - **Non pubblicati**: il listino della presentazione (210.000 euro per 15 giorni, A+B) e i recapiti
   Diesse Media che compaiono in ultima pagina.
 
+### Richiamo laterale
+
+Linguetta fissa sul bordo destro (`.richiamo`) con scritta in verticale "Maxi affissione C.so Vittorio
+Emanuele" e un punto che pulsa piano; porta a `#evidenza`. Si ritrae quando la sezione e a schermo, e su
+telefono diventa una pastiglia in basso a destra che compare **solo dopo l'hero**, per non coprire i
+pulsanti. Niente IntersectionObserver: un controllo sulla posizione allo scroll fa lo stesso lavoro,
+funziona ovunque e si puo verificare senza aspettare un fotogramma. Parte sempre visibile: e il JS che
+la nasconde, mai il contrario.
+
 ## Pagine legali
 
 `privacy.html` e `cookie.html`, stessa struttura del sito Diesse Media, generate riusando barra e piede

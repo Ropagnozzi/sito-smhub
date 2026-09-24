@@ -114,6 +114,30 @@
     });
   }
 
+  /* Il richiamo laterale si ritrae quando la sezione in evidenza e a schermo:
+     parte visibile e viene nascosto da qui, mai il contrario. */
+  var richiamo = document.querySelector('.richiamo');
+  var sezioneEvidenza = document.getElementById('evidenza');
+  if (richiamo && sezioneEvidenza) {
+    // niente IntersectionObserver: un controllo sulla posizione allo scroll fa
+    // la stessa cosa, funziona ovunque ed e verificabile senza aspettare un
+    // fotogramma. Il richiamo sparisce quando un terzo della sezione e a schermo.
+    // sul telefono la pastiglia sta in basso a destra e coprirebbe i pulsanti
+    // dell'hero: li compare solo dopo che l'apertura e passata
+    var stretto = window.matchMedia('(max-width: 700px)');
+    var guardaSezione = function () {
+      var r = sezioneEvidenza.getBoundingClientRect();
+      var visibile = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0);
+      var sullaSezione = visibile > Math.min(r.height, window.innerHeight) * 0.34;
+      var suHero = stretto.matches && hero &&
+        hero.getBoundingClientRect().bottom > window.innerHeight * 0.55;
+      richiamo.classList.toggle('via', sullaSezione || suHero);
+    };
+    guardaSezione();
+    window.addEventListener('scroll', guardaSezione, { passive: true });
+    window.addEventListener('resize', guardaSezione);
+  }
+
   /* ---------- in evidenza: la domination di Corso Vittorio Emanuele ---------
      Due impianti su ponteggio che non fanno parte del catalogo dei 47: i dati
      stanno qui perche arrivano dalla presentazione, non dall'xlsx. */
