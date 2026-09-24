@@ -261,6 +261,36 @@ autonomo di SM HUB, visto che il dato e lo stesso ma il modo di presentarlo no. 
 - Pagine interne (impianti, contatti) e pagine legali (privacy, cookie) quando si decide la struttura.
 - Dominio e pubblicazione.
 
+## Pagine legali
+
+`privacy.html` e `cookie.html`, stessa struttura del sito Diesse Media, generate riusando barra e piede
+di `index.html` (la barra senza l'interruttore provvisorio, e senza lo script dell'intro: il velo
+coprirebbe la pagina). Sono collegate dal piede di tutte le pagine.
+
+Contenuto aderente a quello che il sito fa davvero: nessun cookie proprio, nessuna statistica, nessun
+modulo; due sole voci di archiviazione tecnica (`smhubIntro` in sessionStorage, `smhubTema` in
+localStorage) e tre risorse di terze parti che ricevono l'IP (Google Fonts, cdnjs/Cloudflare,
+OpenStreetMap). **Restano da riempire i segnaposto**: ragione sociale, sede, P.IVA, email.
+
+## Andare online su www.smhub.it (come diessemedia.it)
+
+Dominio e DNS sono su Aruba; la posta e indipendente dal sito (MX su mx.smhub.it, webmail su host
+propri), quindi non va toccata. Passi, nell'ordine:
+
+1. riempire i segnaposto dei recapiti in `index.html`, `privacy.html`, `cookie.html`;
+2. togliere `CNAME` da `.gitignore`, creare il file `CNAME` con dentro `www.smhub.it`, commit e push
+   (come `sito-diessemedia/CNAME`, che contiene `www.diessemedia.it`);
+3. su GitHub, Settings -> Pages -> Custom domain: `www.smhub.it`;
+4. nel pannello Aruba, nei record DNS del dominio:
+   - `www` -> CNAME `ropagnozzi.github.io`
+   - dominio nudo `@` -> quattro record A: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`,
+     `185.199.111.153`
+   - **non toccare MX, webmail, ftp e il TXT di SPF**;
+5. attendere la propagazione, poi in Settings -> Pages spuntare **Enforce HTTPS**.
+
+Il punto 5 e quello che era sfuggito con piani.diessemedia.it: finche non si spunta, il certificato
+resta quello di `*.github.io` e il browser segnala il sito come non sicuro.
+
 ## Anteprima locale
 
 Configurazione `sito-smhub` in `.claude/launch.json`, porta 8792.
