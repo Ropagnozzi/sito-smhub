@@ -14,7 +14,7 @@
 <!-- Due font: IBM Plex Mono (payoff, titoli, etichette) e Archivo (testo corrente). -->
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="css/style.css?v=45">
+<link rel="stylesheet" href="css/style.css?v=48">
 </head>
 <body>
 
@@ -208,11 +208,21 @@
 
 </main>
 
-<!-- richiamo laterale alla sezione in evidenza: si ritrae quando la sezione e a schermo -->
-<a class="richiamo" href="#evidenza" aria-label="Vai alla maxi affissione di Corso Vittorio Emanuele">
-  <span class="richiamo-punto" aria-hidden="true"></span>
-  <span class="richiamo-testo">Maxi affissione <b>C.so Vittorio Emanuele</b></span>
-</a>
+<!-- Richiamo alla sezione in evidenza, in basso a destra: un piccolo telo
+     illuminato, con la foto vera dell'impianto. Si chiude con la x. -->
+<aside class="richiamo" id="richiamo">
+  <a class="richiamo-telo" href="#evidenza">
+    <span class="richiamo-lampade" aria-hidden="true"></span>
+    <img src="assets/foto/domination/dom-a-01.jpg" alt="" loading="lazy" decoding="async">
+    <span class="richiamo-testo">
+      <span class="richiamo-occhiello">Nuova posizione</span>
+      <span class="richiamo-titolo">Maxi affissione<b>C.so Vittorio Emanuele</b></span>
+      <span class="richiamo-dati">247 m&sup2; &middot; due direttrici &middot; illuminati</span>
+    </span>
+    <span class="richiamo-freccia" aria-hidden="true">&rarr;</span>
+  </a>
+  <button type="button" class="richiamo-chiudi" aria-label="Chiudi il richiamo">&times;</button>
+</aside>
 
 <footer>
   <div class="piede">
@@ -241,6 +251,6 @@
 <script src="js/intro.js?v=4"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script src="js/impianti-data.js?v=8" defer></script>
-<script src="js/site.js?v=21" defer></script>
+<script src="js/site.js?v=22" defer></script>
 </body>
 </html>

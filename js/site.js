@@ -122,10 +122,22 @@
     // niente IntersectionObserver: un controllo sulla posizione allo scroll fa
     // la stessa cosa, funziona ovunque ed e verificabile senza aspettare un
     // fotogramma. Il richiamo sparisce quando un terzo della sezione e a schermo.
-    // sul telefono la pastiglia sta in basso a destra e coprirebbe i pulsanti
-    // dell'hero: li compare solo dopo che l'apertura e passata
+    // Chi lo chiude non se lo ritrova a ogni pagina: la scelta vale per la sessione.
+    var chiuso = false;
+    try { chiuso = sessionStorage.getItem('smhubRichiamo') === 'chiuso'; } catch (e) {}
+    var tastoChiudi = richiamo.querySelector('.richiamo-chiudi');
+    if (tastoChiudi) {
+      tastoChiudi.addEventListener('click', function () {
+        chiuso = true;
+        richiamo.classList.add('via');
+        try { sessionStorage.setItem('smhubRichiamo', 'chiuso'); } catch (e) {}
+      });
+    }
+    // Sul telefono il riquadro coprirebbe i pulsanti dell'hero: li compare solo
+    // dopo che l'apertura e passata.
     var stretto = window.matchMedia('(max-width: 700px)');
     var guardaSezione = function () {
+      if (chiuso) { richiamo.classList.add('via'); return; }
       var r = sezioneEvidenza.getBoundingClientRect();
       var visibile = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0);
       var sullaSezione = visibile > Math.min(r.height, window.innerHeight) * 0.34;

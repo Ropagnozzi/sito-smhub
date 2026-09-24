@@ -277,14 +277,20 @@ le sei foto compresse stanno in `assets/foto/domination/` (1,6 MB in tutto).
 - **Non pubblicati**: il listino della presentazione (210.000 euro per 15 giorni, A+B) e i recapiti
   Diesse Media che compaiono in ultima pagina.
 
-### Richiamo laterale
+### Richiamo alla sezione in evidenza
 
-Linguetta fissa sul bordo destro (`.richiamo`) con scritta in verticale "Maxi affissione C.so Vittorio
-Emanuele" e un punto che pulsa piano; porta a `#evidenza`. Si ritrae quando la sezione e a schermo, e su
-telefono diventa una pastiglia in basso a destra che compare **solo dopo l'hero**, per non coprire i
-pulsanti. Niente IntersectionObserver: un controllo sulla posizione allo scroll fa lo stesso lavoro,
-funziona ovunque e si puo verificare senza aspettare un fotogramma. Parte sempre visibile: e il JS che
-la nasconde, mai il contrario.
+In basso a destra, **un piccolo telo pubblicitario** invece di un banner: foto vera dell'impianto,
+cornice blu, tre coni di luce come i fari dei maxi e la luce radente del sito che lo attraversa ogni
+5 secondi. Testo orizzontale su tre livelli (occhiello, titolo, dati) e freccia. Prima era una linguetta
+verticale sul bordo destro: illeggibile su desktop.
+
+- Porta a `#evidenza`; si ritrae quando la sezione e a schermo.
+- Si chiude con la **x** e la scelta vale per la sessione (`sessionStorage`, chiave `smhubRichiamo`).
+- Su telefono diventa una striscia a tutta larghezza e compare solo dopo l'hero, per non coprire i pulsanti.
+- Niente IntersectionObserver: un controllo sulla posizione allo scroll fa lo stesso lavoro ed e
+  verificabile anche dove il browser non emette fotogrammi. Parte sempre visibile: e il JS che lo nasconde.
+- Con il quarto link in barra lo spazio non bastava piu sotto i 1180 px: li sparisce l'interruttore
+  provvisorio dell'acciaio, la voce meno importante.
 
 ## Pagine legali
 
