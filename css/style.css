@@ -445,6 +445,9 @@ html.galleria-aperta{overflow:hidden}
 @media (hover:hover){.richiesta-svuota:hover{color:var(--accento)}}
 
 .richiesta-periodi{margin-top:18px;max-height:290px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:8px}
+.richiesta-anno{width:100%;margin-top:14px;padding-bottom:6px;border-bottom:1px solid var(--filo);
+  font-family:var(--font-mono);font-size:13px;letter-spacing:.18em;color:var(--accento)}
+.richiesta-anno:first-child{margin-top:0}
 .richiesta-mese{width:100%;margin-top:6px;font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;
   text-transform:uppercase;color:var(--tenue)}
 .richiesta-periodo{flex:1 1 128px;background:var(--fondo-2);border:1px solid var(--filo);cursor:pointer;

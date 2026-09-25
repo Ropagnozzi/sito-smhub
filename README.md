@@ -303,10 +303,14 @@ dati di chi scrive. Il cliente aggiunge gli impianti dal **popup della mappa** o
 al cambio pagina. Il pulsante finale **non invia niente a un server**: compone una mail gia scritta
 (impianti, periodo, dati, note) e apre il programma di posta di chi scrive, tramite un link nascosto.
 
-**Il calendario** elenca 14 quattordicine a partire dalla prima utile. Sono cicli di 14 giorni contati
-da una data di riferimento: in cima al blocco in `js/site.js` ci sono `RIFERIMENTO` (oggi
-**2026-01-05**, un lunedi) e `GIORNI` (14). **Da confermare con Roberto**: se il calendario vero delle
-uscite parte da un'altra data, si cambia solo quella riga e tutte le date si riallineano.
+**Il calendario** parte dalla prima uscita utile e arriva a fine 2027: 33 quattordicine, dal
+**5 ottobre 2026** (prima data di affissione indicata da Roberto) al 26 dicembre 2027, raggruppate per
+anno e per mese. Sono cicli di 14 giorni da lunedi a domenica; le tre costanti stanno in cima al blocco
+in `js/site.js`: `RIFERIMENTO` (2026-10-05), `GIORNI` (14) e `FINO_A` (2027-12-31), che si sposta in
+avanti quando servira il 2028.
+
+Il 2027 serve perche a Napoli si terra l'America's Cup di vela: le campagne su quel periodo si
+prenotano con molto anticipo.
 
 Trappola trovata: la funzione `tuttiGliImpianti()` aveva lo stesso nome di una variabile della mappa
 (l'inquadratura d'insieme), che la sovrascriveva; la variabile ora si chiama `vistaInsieme`.

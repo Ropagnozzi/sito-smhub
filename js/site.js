@@ -420,8 +420,9 @@
      CALENDARIO: le quattordicine sono cicli di 14 giorni contati da una data di
      riferimento. Per allinearlo al calendario vero basta cambiare RIFERIMENTO
      (e, se serve, GIORNI). */
-  var RIFERIMENTO = '2026-01-05';   // lunedi: da qui partono i cicli
+  var RIFERIMENTO = '2026-10-05';   // prima uscita utile: lunedi 5 ottobre 2026
   var GIORNI = 14;
+  var FINO_A = '2027-12-31';        // fin dove arriva il calendario
   var MAIL_RICHIESTE = 'contatti@smhub.it';
   var CHIAVE_SELEZIONE = 'smhubSelezione';
 
@@ -484,33 +485,44 @@
     return (g === 8 || g === 11 ? "all'" : 'al ') + giornoEsteso(data);
   }
 
-  function quattordicine(quante) {
+  // Tutte le uscite dalla prima utile fino a FINO_A, calcolate una volta sola.
+  var calendarioUscite = null;
+  function quattordicine() {
+    if (calendarioUscite) return calendarioUscite;
     var base = new Date(RIFERIMENTO + 'T00:00:00');
+    var limite = new Date(FINO_A + 'T00:00:00');
     var oggi = new Date();
     oggi.setHours(0, 0, 0, 0);
-    // prima partenza da oggi in avanti
+    // si parte dalla prima uscita che non e gia passata
     var passi = Math.ceil((oggi - base) / (GIORNI * 86400000));
     if (passi < 0) passi = 0;
-    var uscite = [];
-    for (var n = 0; n < quante; n++) {
+    calendarioUscite = [];
+    for (var n = 0; n < 200; n++) {
       var inizio = new Date(base.getTime() + (passi + n) * GIORNI * 86400000);
-      var fine = new Date(inizio.getTime() + (GIORNI - 1) * 86400000);
-      uscite.push({ inizio: inizio, fine: fine });
+      if (inizio > limite) break;
+      calendarioUscite.push({
+        inizio: inizio,
+        fine: new Date(inizio.getTime() + (GIORNI - 1) * 86400000)
+      });
     }
-    return uscite;
+    return calendarioUscite;
   }
 
   function costruisciPeriodi() {
     if (!periodiRichiesta) return;
-    var uscite = quattordicine(14);
+    var uscite = quattordicine();
+    var annoCorrente = null;
     var meseCorrente = null;
     var pezzi = [];
     uscite.forEach(function (u, n) {
+      if (u.inizio.getFullYear() !== annoCorrente) {
+        annoCorrente = u.inizio.getFullYear();
+        pezzi.push('<p class="richiesta-anno">' + annoCorrente + '</p>');
+      }
       var mese = u.inizio.getFullYear() + '-' + u.inizio.getMonth();
       if (mese !== meseCorrente) {
         meseCorrente = mese;
-        pezzi.push('<p class="richiesta-mese">' + MESI[u.inizio.getMonth()] + ' ' +
-          u.inizio.getFullYear() + '</p>');
+        pezzi.push('<p class="richiesta-mese">' + MESI[u.inizio.getMonth()] + '</p>');
       }
       pezzi.push('<button type="button" class="richiesta-periodo" data-uscita="' + n +
         '" aria-pressed="false"><b>' + giorno(u.inizio) + '</b>' +
@@ -530,7 +542,7 @@
 
   function periodoCompleto() {
     if (partenzaScelta === null) return null;
-    var uscite = quattordicine(14);
+    var uscite = quattordicine();
     var quante = Number(quanteRichiesta ? quanteRichiesta.value : 1) || 1;
     var inizio = uscite[partenzaScelta].inizio;
     var fine = new Date(inizio.getTime() + (GIORNI * quante - 1) * 86400000);
