@@ -403,6 +403,77 @@ html.galleria-aperta{overflow:hidden}
 .imp-dati dt{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--tenue)}
 .imp-dati dd{margin:3px 0 0;font-size:15px;color:var(--testo-muto)}
 
+/* ---------- richiesta di disponibilita ----------
+   Tre blocchi affiancati: impianti scelti, quattordicine, dati di chi scrive.
+   Il pulsante "Aggiungi" vive sia nelle schede sia nei popup della mappa. */
+.scegli{margin-top:16px;width:100%;background:none;color:var(--accento);cursor:pointer;
+  border:1px solid var(--accento);padding:10px 12px;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  transition:background .18s,color .18s}
+@media (hover:hover){.scegli:hover{background:var(--accento);color:var(--su-accento)}}
+.scegli[aria-pressed="true"]{background:var(--accento);color:var(--su-accento)}
+.scegli:focus-visible{outline:2px solid var(--accento);outline-offset:2px}
+.pop-impianto .pop-scegli{margin:0 14px 14px;width:calc(100% - 28px)}
+
+.richiesta{border-top:1px solid var(--filo);background:var(--fondo-2)}
+.richiesta-griglia{margin-top:clamp(30px,5vh,52px);display:grid;gap:1px;background:var(--filo);
+  border:1px solid var(--filo);grid-template-columns:repeat(3,1fr)}
+@media (max-width:1000px){.richiesta-griglia{grid-template-columns:1fr}}
+.richiesta-blocco{background:var(--fondo);padding:clamp(18px,2vw,28px);display:flex;flex-direction:column}
+.richiesta-titolo{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--accento);display:flex;align-items:center;gap:10px}
+.richiesta-conta{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;
+  padding:0 6px;background:var(--accento);color:var(--su-accento);font-size:12px;letter-spacing:0}
+
+.richiesta-elenco{list-style:none;margin:18px 0 0;padding:0;display:flex;flex-direction:column;gap:1px;
+  background:var(--filo)}
+.richiesta-elenco li{background:var(--fondo-2);padding:12px 14px;display:grid;
+  grid-template-columns:1fr auto;gap:2px 12px;align-items:start}
+.richiesta-code{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.18em;color:var(--accento)}
+.richiesta-pos{grid-column:1;font-size:14px;color:var(--testo)}
+.richiesta-dati{grid-column:1;font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--tenue)}
+.richiesta-togli{grid-column:2;grid-row:1 / span 3;align-self:center;width:28px;height:28px;padding:0;
+  background:none;border:1px solid var(--filo-forte);color:var(--testo-muto);cursor:pointer;
+  font:15px/24px var(--font-mono)}
+@media (hover:hover){.richiesta-togli:hover{border-color:var(--accento);color:var(--accento)}}
+.richiesta-vuoto{margin-top:18px;color:var(--testo-muto);font-size:15px}
+.richiesta-vuoto b{color:var(--testo)}
+.richiesta-svuota{margin-top:16px;align-self:flex-start;background:none;border:0;padding:0;cursor:pointer;
+  color:var(--tenue);font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;text-decoration:underline;text-underline-offset:3px}
+@media (hover:hover){.richiesta-svuota:hover{color:var(--accento)}}
+
+.richiesta-periodi{margin-top:18px;max-height:290px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:8px}
+.richiesta-mese{width:100%;margin-top:6px;font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--tenue)}
+.richiesta-periodo{flex:1 1 128px;background:var(--fondo-2);border:1px solid var(--filo);cursor:pointer;
+  padding:9px 10px;color:var(--testo);text-align:left;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+.richiesta-periodo b{display:block;font-size:13px;letter-spacing:.06em}
+.richiesta-periodo span{color:var(--tenue)}
+@media (hover:hover){.richiesta-periodo:hover{border-color:var(--accento)}}
+.richiesta-periodo[aria-pressed="true"]{background:var(--accento);border-color:var(--accento);color:var(--su-accento)}
+.richiesta-periodo[aria-pressed="true"] span{color:var(--su-accento);opacity:.8}
+.richiesta-durata{margin-top:18px;display:flex;flex-direction:column;gap:8px}
+.richiesta-durata label{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--tenue)}
+.richiesta-durata select{background:var(--fondo-2);color:var(--testo);border:1px solid var(--filo);
+  padding:10px 12px;font-family:var(--font-mono);font-size:12px}
+.richiesta-periodo-scelto{margin-top:16px;font-size:14px;color:var(--testo)}
+
+.richiesta-campi{margin-top:18px;display:grid;gap:12px}
+.richiesta-campi label{display:flex;flex-direction:column;gap:6px;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--tenue)}
+.richiesta-campi input,.richiesta-campi textarea{background:var(--fondo-2);color:var(--testo);
+  border:1px solid var(--filo);padding:11px 12px;font-family:var(--font-testo);font-size:15px;
+  width:100%;resize:vertical}
+.richiesta-campi input:focus,.richiesta-campi textarea:focus{outline:2px solid var(--accento);outline-offset:-1px}
+.richiesta-invia{margin-top:18px;width:100%}
+.richiesta-avvertenza{margin-top:14px;font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--tenue);line-height:1.7}
+.richiesta-avvertenza.manca{color:#ffb4a8}
+
 /* chiusura */
 .chiusura{border-top:1px solid var(--filo)}
 .chiusura h2{max-width:20em}

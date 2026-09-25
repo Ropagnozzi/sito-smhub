@@ -295,6 +295,22 @@ verticale sul bordo destro: illeggibile su desktop.
 - Con il quarto link in barra lo spazio non bastava piu sotto i 1180 px: li sparisce l'interruttore
   provvisorio dell'acciaio, la voce meno importante.
 
+## Richiesta di disponibilita
+
+Sezione `#richiesta` in fondo alla home, in tre blocchi: impianti scelti, quattordicina di partenza,
+dati di chi scrive. Il cliente aggiunge gli impianti dal **popup della mappa** o dal pulsante
+**Aggiungi** sulle schede; la scelta resta in `sessionStorage` (chiave `smhubSelezione`) e sopravvive
+al cambio pagina. Il pulsante finale **non invia niente a un server**: compone una mail gia scritta
+(impianti, periodo, dati, note) e apre il programma di posta di chi scrive, tramite un link nascosto.
+
+**Il calendario** elenca 14 quattordicine a partire dalla prima utile. Sono cicli di 14 giorni contati
+da una data di riferimento: in cima al blocco in `js/site.js` ci sono `RIFERIMENTO` (oggi
+**2026-01-05**, un lunedi) e `GIORNI` (14). **Da confermare con Roberto**: se il calendario vero delle
+uscite parte da un'altra data, si cambia solo quella riga e tutte le date si riallineano.
+
+Trappola trovata: la funzione `tuttiGliImpianti()` aveva lo stesso nome di una variabile della mappa
+(l'inquadratura d'insieme), che la sovrascriveva; la variabile ora si chiama `vistaInsieme`.
+
 ## Pagine legali
 
 `privacy.html` e `cookie.html`, stessa struttura del sito Diesse Media, generate riusando barra e piede

@@ -14,7 +14,7 @@
 <!-- Due font: IBM Plex Mono (payoff, titoli, etichette) e Archivo (testo corrente). -->
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="css/style.css?v=49">
+<link rel="stylesheet" href="css/style.css?v=51">
 </head>
 <body>
 
@@ -42,6 +42,7 @@
     <a href="#evidenza">In evidenza</a>
     <a href="#impianti">Impianti</a>
     <a href="#copertura">Copertura</a>
+    <a href="#richiesta">Richiesta</a>
     <a href="#contatti">Contatti</a>
   </nav>
   <div class="tema" role="group" aria-label="Gradazione dell'acciaio, provvisorio">
@@ -49,7 +50,7 @@
     <button type="button" data-tema="medio" aria-pressed="true">Medio</button>
     <button type="button" data-tema="chiaro" aria-pressed="false">Chiaro</button>
   </div>
-  <a class="btn" href="#contatti">Richiedi disponibilità</a>
+  <a class="btn" href="#richiesta">Richiedi disponibilità</a>
 </header>
 
 <main id="top">
@@ -75,7 +76,7 @@
     <div class="hero-sotto">
       <p class="hero-riga">Maxi affissioni e grandi formati a Napoli</p>
       <div class="hero-azioni">
-        <a class="btn" href="#contatti">Richiedi disponibilità</a>
+        <a class="btn" href="#richiesta">Richiedi disponibilità</a>
         <a class="btn btn-ghost" href="#impianti">Vedi gli impianti</a>
       </div>
     </div>
@@ -141,7 +142,7 @@
         </article>
       </div>
 
-      <a class="btn evidenza-btn" href="#contatti">Chiedi disponibilit&agrave; e listino</a>
+      <a class="btn evidenza-btn" href="#richiesta">Chiedi disponibilit&agrave; e listino</a>
     </div>
   </section>
 
@@ -194,6 +195,67 @@
       <ul class="conta" id="conta-impianti" aria-label="Riepilogo del patrimonio impianti"></ul>
       <div class="filtro" id="filtro-impianti" role="group" aria-label="Filtra gli impianti per tipologia"></div>
       <div class="elenco" id="elenco-impianti"></div>
+    </div>
+  </section>
+
+
+  <!-- RICHIESTA: gli impianti scelti sulla mappa o dalle schede finiscono qui,
+       insieme alla quattordicina di partenza. Il modulo non invia niente a un
+       server: compone una mail nel programma di posta di chi scrive. -->
+  <section class="richiesta" id="richiesta">
+    <div class="wrap">
+      <p class="etichetta">Richiesta di disponibilit&agrave;</p>
+      <h2>Scegli gli impianti, scegli il periodo.</h2>
+      <p class="intro">Tocca i segnaposti sulla mappa o il pulsante sulle schede per aggiungere un
+      impianto alla richiesta. Poi indica da quale quattordicina vuoi partire: ti rispondiamo con le
+      disponibilit&agrave; effettive in quel periodo.</p>
+
+      <div class="richiesta-griglia">
+
+        <div class="richiesta-blocco">
+          <p class="richiesta-titolo">1 &middot; Impianti scelti <span class="richiesta-conta" id="richiesta-conta">0</span></p>
+          <ul class="richiesta-elenco" id="richiesta-elenco"></ul>
+          <p class="richiesta-vuoto" id="richiesta-vuoto">Nessun impianto scelto. Usa la mappa qui sopra
+          o il pulsante <b>Aggiungi</b> sulle schede.</p>
+          <button type="button" class="richiesta-svuota" id="richiesta-svuota" hidden>Svuota l&#39;elenco</button>
+        </div>
+
+        <div class="richiesta-blocco">
+          <p class="richiesta-titolo">2 &middot; Quattordicina di partenza</p>
+          <div class="richiesta-periodi" id="richiesta-periodi" role="group"
+            aria-label="Scegli la quattordicina di partenza"></div>
+          <div class="richiesta-durata">
+            <label for="richiesta-quante">Per quante quattordicine</label>
+            <select id="richiesta-quante">
+              <option value="1">1 quattordicina</option>
+              <option value="2">2 quattordicine</option>
+              <option value="3">3 quattordicine</option>
+              <option value="4">4 quattordicine</option>
+              <option value="6">6 quattordicine</option>
+              <option value="8">8 quattordicine</option>
+            </select>
+          </div>
+          <p class="richiesta-periodo-scelto" id="richiesta-periodo-scelto" aria-live="polite"></p>
+        </div>
+
+        <div class="richiesta-blocco">
+          <p class="richiesta-titolo">3 &middot; I tuoi dati</p>
+          <div class="richiesta-campi">
+            <label>Nome e cognome<input type="text" id="richiesta-nome" autocomplete="name" required></label>
+            <label>Azienda<input type="text" id="richiesta-azienda" autocomplete="organization"></label>
+            <label>Email<input type="email" id="richiesta-email" autocomplete="email" required></label>
+            <label>Telefono<input type="tel" id="richiesta-telefono" autocomplete="tel"></label>
+            <label class="richiesta-note">Note<textarea id="richiesta-note" rows="3"
+              placeholder="Campagna, materiali, esigenze particolari"></textarea></label>
+          </div>
+          <button type="button" class="btn richiesta-invia" id="richiesta-invia">Invia la richiesta</button>
+          <a id="richiesta-mailto" hidden aria-hidden="true">mail</a>
+          <p class="richiesta-avvertenza" id="richiesta-avvertenza" aria-live="polite">Il pulsante apre il
+          tuo programma di posta con la richiesta gi&agrave; scritta: nessun dato viene inviato prima che
+          tu la spedisca.</p>
+        </div>
+
+      </div>
     </div>
   </section>
 
@@ -251,6 +313,6 @@
 <script src="js/intro.js?v=4"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script src="js/impianti-data.js?v=8" defer></script>
-<script src="js/site.js?v=24" defer></script>
+<script src="js/site.js?v=31" defer></script>
 </body>
 </html>

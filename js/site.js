@@ -266,6 +266,7 @@
       mappa.on('popupopen', function (e) {
         var radicePopup = e.popup.getElement();
         if (!radicePopup) return;
+        aggiornaPulsantiScelta();
         [].slice.call(radicePopup.querySelectorAll('.pop-miniatura')).forEach(function (b) {
           b.addEventListener('click', function () {
             apriGalleria(perCodice[b.getAttribute('data-codice')],
@@ -284,8 +285,8 @@
           { className: 'pop-impianto', minWidth: 250, maxWidth: 250 }).addTo(gruppo);
       });
 
-      var tuttiGliImpianti = gruppo.getBounds().pad(0.15);
-      mappa.fitBounds(tuttiGliImpianti);
+      var vistaInsieme = gruppo.getBounds().pad(0.15);
+      mappa.fitBounds(vistaInsieme);
 
       // sotto + e -: torna alla vista d'insieme dopo aver ingrandito
       var Insieme = L.Control.extend({
@@ -302,7 +303,7 @@
           L.DomEvent.on(tasto, 'click', function (e) {
             L.DomEvent.preventDefault(e);
             mappa.closePopup();
-            mappa.flyToBounds(tuttiGliImpianti, { duration: 0.6 });
+            mappa.flyToBounds(vistaInsieme, { duration: 0.6 });
           });
           return barra;
         }
@@ -342,6 +343,8 @@
       ].filter(function (r) { return r[1]; }).map(function (r) {
         return '<div><dt>' + r[0] + '</dt><dd>' + r[1] + '</dd></div>';
       }).join('');
+      var scegli = '<button type="button" class="scegli imp-scegli" data-codice="' +
+        testo(imp.code) + '" aria-pressed="false">Aggiungi</button>';
       return '<article class="imp" id="imp-' + testo(imp.code) + '"' +
                ' data-tipo="' + (imp.type === 'Stand alone' ? 'autoportante' : 'edificio') + '">' +
                '<div class="imp-foto">' + foto + '</div>' +
@@ -349,10 +352,13 @@
                  '<p class="imp-code">' + testo(imp.code) + '</p>' +
                  '<h3>' + testo(imp.pos) + '</h3>' +
                  '<dl class="imp-dati">' + dati + '</dl>' +
+                 scegli +
                '</div>' +
              '</article>';
     });
     contenitoreElenco.innerHTML = pezzi.join('');
+
+    if (typeof aggiornaPulsantiScelta === 'function') aggiornaPulsantiScelta();
 
     // un solo ascolto per tutte le schede
     contenitoreElenco.addEventListener('click', function (e) {
@@ -405,6 +411,253 @@
     }
   }
 
+  /* ---------- richiesta di disponibilita ------------------------------------
+     Il cliente sceglie gli impianti dalla mappa o dalle schede, indica da quale
+     quattordicina vuole partire e per quante, e il pulsante compone una mail
+     nel suo programma di posta. Il sito e statico: non c'e nessun server che
+     riceva i dati, e nessun dato parte prima che sia lui a spedire.
+
+     CALENDARIO: le quattordicine sono cicli di 14 giorni contati da una data di
+     riferimento. Per allinearlo al calendario vero basta cambiare RIFERIMENTO
+     (e, se serve, GIORNI). */
+  var RIFERIMENTO = '2026-01-05';   // lunedi: da qui partono i cicli
+  var GIORNI = 14;
+  var MAIL_RICHIESTE = 'contatti@smhub.it';
+  var CHIAVE_SELEZIONE = 'smhubSelezione';
+
+  var selezione = [];
+  try {
+    var salvata = JSON.parse(sessionStorage.getItem(CHIAVE_SELEZIONE));
+    if (Array.isArray(salvata)) selezione = salvata;
+  } catch (e) {}
+
+  var elencoRichiesta = document.getElementById('richiesta-elenco');
+  var contaRichiesta = document.getElementById('richiesta-conta');
+  var vuotoRichiesta = document.getElementById('richiesta-vuoto');
+  var svuotaRichiesta = document.getElementById('richiesta-svuota');
+  var periodiRichiesta = document.getElementById('richiesta-periodi');
+  var quanteRichiesta = document.getElementById('richiesta-quante');
+  var periodoScelto = document.getElementById('richiesta-periodo-scelto');
+  var inviaRichiesta = document.getElementById('richiesta-invia');
+  var avvertenza = document.getElementById('richiesta-avvertenza');
+  var partenzaScelta = null;
+
+  function tuttiGliImpianti() {
+    var lista = elenco().slice();
+    Object.keys(DOMINATION).forEach(function (k) { lista.push(DOMINATION[k]); });
+    return lista;
+  }
+
+  function trovaImpianto(codice) {
+    return tuttiGliImpianti().filter(function (i) { return i.code === codice; })[0];
+  }
+
+  function inRichiesta(codice) {
+    // le schede chiedono lo stato mentre vengono costruite, cioe prima che
+    // questo blocco assegni la lista: senza il controllo qui salta tutto
+    return Array.isArray(selezione) && selezione.indexOf(codice) > -1;
+  }
+
+  function commutaImpianto(codice) {
+    var i = selezione.indexOf(codice);
+    if (i > -1) selezione.splice(i, 1);
+    else selezione.push(codice);
+    try { sessionStorage.setItem(CHIAVE_SELEZIONE, JSON.stringify(selezione)); } catch (e) {}
+    aggiornaRichiesta();
+  }
+
+  /* ---- calendario delle quattordicine ---- */
+  var MESI = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno',
+              'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
+
+  function giorno(data) {
+    return data.getDate() + ' ' + MESI[data.getMonth()].slice(0, 3);
+  }
+
+  function giornoEsteso(data) {
+    return data.getDate() + ' ' + MESI[data.getMonth()] + ' ' + data.getFullYear();
+  }
+
+  // in italiano si dice "all'8" e "all'11", non "al 8"
+  function al(data) {
+    var g = data.getDate();
+    return (g === 8 || g === 11 ? "all'" : 'al ') + giornoEsteso(data);
+  }
+
+  function quattordicine(quante) {
+    var base = new Date(RIFERIMENTO + 'T00:00:00');
+    var oggi = new Date();
+    oggi.setHours(0, 0, 0, 0);
+    // prima partenza da oggi in avanti
+    var passi = Math.ceil((oggi - base) / (GIORNI * 86400000));
+    if (passi < 0) passi = 0;
+    var uscite = [];
+    for (var n = 0; n < quante; n++) {
+      var inizio = new Date(base.getTime() + (passi + n) * GIORNI * 86400000);
+      var fine = new Date(inizio.getTime() + (GIORNI - 1) * 86400000);
+      uscite.push({ inizio: inizio, fine: fine });
+    }
+    return uscite;
+  }
+
+  function costruisciPeriodi() {
+    if (!periodiRichiesta) return;
+    var uscite = quattordicine(14);
+    var meseCorrente = null;
+    var pezzi = [];
+    uscite.forEach(function (u, n) {
+      var mese = u.inizio.getFullYear() + '-' + u.inizio.getMonth();
+      if (mese !== meseCorrente) {
+        meseCorrente = mese;
+        pezzi.push('<p class="richiesta-mese">' + MESI[u.inizio.getMonth()] + ' ' +
+          u.inizio.getFullYear() + '</p>');
+      }
+      pezzi.push('<button type="button" class="richiesta-periodo" data-uscita="' + n +
+        '" aria-pressed="false"><b>' + giorno(u.inizio) + '</b>' +
+        '<span>&rarr; ' + giorno(u.fine) + '</span></button>');
+    });
+    periodiRichiesta.innerHTML = pezzi.join('');
+    periodiRichiesta.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('.richiesta-periodo') : null;
+      if (!b) return;
+      partenzaScelta = Number(b.getAttribute('data-uscita'));
+      [].slice.call(periodiRichiesta.querySelectorAll('.richiesta-periodo')).forEach(function (x) {
+        x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
+      });
+      aggiornaPeriodo();
+    });
+  }
+
+  function periodoCompleto() {
+    if (partenzaScelta === null) return null;
+    var uscite = quattordicine(14);
+    var quante = Number(quanteRichiesta ? quanteRichiesta.value : 1) || 1;
+    var inizio = uscite[partenzaScelta].inizio;
+    var fine = new Date(inizio.getTime() + (GIORNI * quante - 1) * 86400000);
+    return { inizio: inizio, fine: fine, quante: quante };
+  }
+
+  function aggiornaPeriodo() {
+    if (!periodoScelto) return;
+    var p = periodoCompleto();
+    periodoScelto.textContent = p
+      ? 'Dal ' + giornoEsteso(p.inizio) + ' ' + al(p.fine) +
+        ' (' + p.quante + (p.quante === 1 ? ' quattordicina)' : ' quattordicine)')
+      : '';
+  }
+
+  /* ---- elenco degli impianti scelti ---- */
+  function aggiornaRichiesta() {
+    if (contaRichiesta) contaRichiesta.textContent = selezione.length;
+    if (elencoRichiesta) {
+      elencoRichiesta.innerHTML = selezione.map(function (codice) {
+        var imp = trovaImpianto(codice);
+        if (!imp) return '';
+        var dati = [imp.dim, imp.sqm ? imp.sqm + ' m&sup2;' : '', imp.type]
+          .filter(Boolean).join(' &middot; ');
+        return '<li><span class="richiesta-code">' + testo(imp.code) + '</span>' +
+          '<span class="richiesta-pos">' + testo(imp.pos) + '</span>' +
+          '<span class="richiesta-dati">' + dati + '</span>' +
+          '<button type="button" class="richiesta-togli" data-codice="' + testo(imp.code) +
+          '" aria-label="Togli ' + testo(imp.code) + ' dalla richiesta">&times;</button></li>';
+      }).join('');
+    }
+    if (vuotoRichiesta) vuotoRichiesta.hidden = selezione.length > 0;
+    if (svuotaRichiesta) svuotaRichiesta.hidden = selezione.length === 0;
+    aggiornaPulsantiScelta();
+  }
+
+  // i pulsanti "Aggiungi" delle schede e dei popup mostrano sempre lo stato vero
+  function aggiornaPulsantiScelta() {
+    [].slice.call(document.querySelectorAll('.scegli')).forEach(function (b) {
+      var dentro = inRichiesta(b.getAttribute('data-codice'));
+      b.setAttribute('aria-pressed', dentro ? 'true' : 'false');
+      b.textContent = dentro ? 'Nella richiesta' : 'Aggiungi';
+    });
+  }
+
+  if (elencoRichiesta) {
+    elencoRichiesta.addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('.richiesta-togli') : null;
+      if (b) commutaImpianto(b.getAttribute('data-codice'));
+    });
+  }
+  if (svuotaRichiesta) {
+    svuotaRichiesta.addEventListener('click', function () {
+      selezione = [];
+      try { sessionStorage.removeItem(CHIAVE_SELEZIONE); } catch (e) {}
+      aggiornaRichiesta();
+    });
+  }
+  // un solo ascolto per tutti i pulsanti "Aggiungi", ovunque si trovino
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.scegli') : null;
+    if (b) commutaImpianto(b.getAttribute('data-codice'));
+  });
+  if (quanteRichiesta) quanteRichiesta.addEventListener('change', aggiornaPeriodo);
+
+  /* ---- la mail ---- */
+  if (inviaRichiesta) {
+    inviaRichiesta.addEventListener('click', function () {
+      var nome = (document.getElementById('richiesta-nome') || {}).value || '';
+      var azienda = (document.getElementById('richiesta-azienda') || {}).value || '';
+      var email = (document.getElementById('richiesta-email') || {}).value || '';
+      var tel = (document.getElementById('richiesta-telefono') || {}).value || '';
+      var note = (document.getElementById('richiesta-note') || {}).value || '';
+      var p = periodoCompleto();
+
+      var manca = [];
+      if (!selezione.length) manca.push('almeno un impianto');
+      if (!p) manca.push('la quattordicina di partenza');
+      if (!nome.trim()) manca.push('il nome');
+      if (!email.trim()) manca.push('l\'email');
+      if (manca.length) {
+        avvertenza.textContent = 'Manca ' + manca.join(', ') + '.';
+        avvertenza.classList.add('manca');
+        return;
+      }
+      avvertenza.classList.remove('manca');
+      avvertenza.textContent = 'Richiesta pronta: controlla il programma di posta che si è aperto.';
+
+      var righe = [];
+      righe.push('Richiesta di disponibilità - SM HUB');
+      righe.push('');
+      righe.push('PERIODO');
+      righe.push('Dal ' + giornoEsteso(p.inizio) + ' ' + al(p.fine) +
+        ' (' + p.quante + (p.quante === 1 ? ' quattordicina)' : ' quattordicine)'));
+      righe.push('');
+      righe.push('IMPIANTI RICHIESTI (' + selezione.length + ')');
+      selezione.forEach(function (codice) {
+        var imp = trovaImpianto(codice);
+        if (!imp) return;
+        var dati = [imp.dim, imp.sqm ? imp.sqm + ' mq' : '', imp.light ? 'illuminato' : '', imp.type]
+          .filter(Boolean).join(', ');
+        righe.push('- ' + imp.code + ' | ' + imp.pos + ' | ' + dati);
+      });
+      righe.push('');
+      righe.push('RICHIEDENTE');
+      righe.push('Nome: ' + nome);
+      if (azienda.trim()) righe.push('Azienda: ' + azienda);
+      righe.push('Email: ' + email);
+      if (tel.trim()) righe.push('Telefono: ' + tel);
+      if (note.trim()) { righe.push(''); righe.push('NOTE'); righe.push(note); }
+
+      var oggetto = 'Richiesta disponibilità ' + selezione.length + ' impianti dal ' +
+        giornoEsteso(p.inizio);
+      // un link nascosto invece di location.href: la pagina resta dov'e e il
+      // programma di posta riceve la richiesta gia scritta
+      var collegamento = document.getElementById('richiesta-mailto');
+      collegamento.href = 'mailto:' + MAIL_RICHIESTE +
+        '?subject=' + encodeURIComponent(oggetto) +
+        '&body=' + encodeURIComponent(righe.join('\n'));
+      collegamento.click();
+    });
+  }
+
+  costruisciPeriodi();
+  aggiornaRichiesta();
+  aggiornaPeriodo();
+
   /* ---------- popup della mappa ----------------------------------------------
      Miniature cliccabili sopra i dati: una a tutta larghezza, due affiancate.
      Sono <button>, cosi si raggiungono anche da tastiera. HTML semplice e non
@@ -428,6 +681,8 @@
       '<p class="pop-code">' + testo(imp.code) + '</p>' +
       '<p class="pop-pos">' + testo(imp.pos) + '</p>' +
       '<p class="pop-dati">' + dati + '</p>' +
+      '<button type="button" class="scegli pop-scegli" data-codice="' + testo(imp.code) +
+        '" aria-pressed="false">Aggiungi</button>' +
       '</div>';
   }
 
