@@ -302,20 +302,21 @@ di `index.html` (la barra senza l'interruttore provvisorio, e senza lo script de
 coprirebbe la pagina). Sono collegate dal piede di tutte le pagine.
 
 Titolare del trattamento: **Gierre Media Srl**, Via Vittorio Veneto 105, 80031 Brusciano (NA),
-P.IVA 09068611210 (dato di Roberto del 2026-09-25, inserito nel piede di tutte le pagine e nella
-sezione 1 della privacy). Restano da inserire **email e telefono**.
+P.IVA 09068611210. Recapiti: **info@diessemedia.it** e **081 18253788** (decisione di Roberto del
+2026-09-25: per SM HUB valgono gli stessi recapiti di Diesse Media). Email e telefono sono cliccabili
+nel piede di tutte le pagine; il pulsante "Richiedi disponibilita" apre una mail con oggetto gia scritto.
 
 Contenuto aderente a quello che il sito fa davvero: nessun cookie proprio, nessuna statistica, nessun
 modulo; due sole voci di archiviazione tecnica (`smhubIntro` in sessionStorage, `smhubTema` in
 localStorage) e tre risorse di terze parti che ricevono l'IP (Google Fonts, cdnjs/Cloudflare,
-OpenStreetMap). **Restano da riempire i segnaposto**: email e telefono.
+OpenStreetMap). Nessun segnaposto rimasto nelle pagine.
 
 ## Andare online su www.smhub.it (come diessemedia.it)
 
 Dominio e DNS sono su Aruba; la posta e indipendente dal sito (MX su mx.smhub.it, webmail su host
 propri), quindi non va toccata. Passi, nell'ordine:
 
-1. riempire gli ultimi segnaposto (email nel mailto e nelle due pagine legali, telefono nel piede);
+1. far rivedere le pagine legali a un legale (i recapiti e il titolare sono gia dentro);
 2. togliere `CNAME` da `.gitignore`, creare il file `CNAME` con dentro `www.smhub.it`, commit e push
    (come `sito-diessemedia/CNAME`, che contiene `www.diessemedia.it`);
 3. su GitHub, Settings -> Pages -> Custom domain: `www.smhub.it`;
